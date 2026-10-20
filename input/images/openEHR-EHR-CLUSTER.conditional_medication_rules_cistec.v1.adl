@@ -1,0 +1,255 @@
+archetype (adl_version=1.4; rm_release=1.1.0; uid=bc96878f-bf8e-456e-b1d4-a7ed85117a61)
+	openEHR-EHR-CLUSTER.conditional_medication_rules_cistec.v1
+
+concept
+	[at0000]
+
+language
+	original_language = <[ISO_639-1::en]>
+	translations = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			author = <
+			>
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			author = <
+			>
+		>
+	>
+
+description
+	original_author = <
+		["date"] = <"2016-01-11">
+		["name"] = <"Ian McNicoll">
+		["organisation"] = <"freshEHR Clinical Informatics Ltd.">
+		["email"] = <"ian@freshehr.com">
+	>
+	lifecycle_state = <"in_development">
+	details = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			purpose = <"Zur Erfassung von Bedingungen, die sich auf die Dosierung oder Verabreichungsrate eines Medikaments auswirken.
+Die Dosierung kann in einem CLUSTER.dosage innerhalb derselben übergeordneten INSTRUCTION.medication_order oder – bei Mehrdeutigkeit – direkt in diesem Cluster gespeichert werden.
+Dieser Archetyp ist eine Ableitung des CLUSTER.conditional_medication_rules.v0 im internationalen CKM, dessen Entwicklung ins Stocken geraten ist und dessen notwendige Änderungen noch nicht in den Trunk übernommen wurden. Wenn die Entwicklung des internationalen Archetyps wieder aufgenommen wird, könnte er diese lokale Variante ersetzen.">
+			copyright = <"© openEHR Foundation">
+			use = <"Primär zur Verwendung innerhalb der „Reserve“ CLUSTER.therapeutic_direction einer Medikamentenverordnung, um gruppierbare Bedingungen zu speichern, unter denen ein bestimmtes Medikament verabreicht werden soll.">
+		>
+		["en"] = <
+			language = <[ISO_639-1::en]>
+			purpose = <"To record conditional factors which impact the dose amount or administration rate of a medication.
+The dose amount can be stored in a CLUSTER.dosage within the same overlying INSTRUCTION.medication_order, or - if ambiguous - directly in this cluster.
+This archetype is a derivative of the CLUSTER.conditional_medication_rules.v0 on the international CKM, whose development is stalled, and necessary changes are not commited to the trunk yet. If the international archetype resumes development, it may be substituting this local variant.
+
+">
+			copyright = <"© openEHR Foundation">
+			use = <"Primarily to be used within the \"Conditional\" CLUSTER.therapeutic_direction of a medication order to persist groupable conditions under which to administer a given medication.">
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			copyright = <"© openEHR Foundation">
+		>
+	>
+	other_details = <
+		["licence"] = <"This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.">
+		["custodian_organisation"] = <"CISTEC AG">
+		["current_contact"] = <"hendrik.heiser@cistec.com">
+		["original_namespace"] = <"org.openehr">
+		["original_publisher"] = <"openEHR Foundation">
+		["custodian_namespace"] = <"com.cistec">
+		["MD5-CAM-1.0.1"] = <"86b8f045c8a3d21afcc703a62c61a9a7">
+		["build_uid"] = <"ac4d5a7d-89ca-4780-9477-54577096c510">
+		["revision"] = <"0.0.1-alpha">
+	>
+
+definition
+	CLUSTER[at0000] matches {    -- Conditional medication instructions
+		items cardinality matches {1..*; unordered} matches {
+			CLUSTER[at0005] occurrences matches {0..*} matches {    -- Condition rule
+				items cardinality matches {1..*; unordered} matches {
+					ELEMENT[at0008] occurrences matches {0..1} matches {    -- Condition name
+						value matches {
+							DV_TEXT matches {*}
+						}
+					}
+					ELEMENT[at0002] occurrences matches {0..1} matches {    -- Condition
+						value matches {
+							DV_QUANTITY matches {*}
+							DV_INTERVAL<DV_QUANTITY> matches {
+								upper matches {
+									DV_QUANTITY matches {*}
+								}
+								lower matches {
+									DV_QUANTITY matches {*}
+								}
+							}
+							DV_COUNT matches {*}
+							DV_INTERVAL<DV_COUNT> matches {
+								upper matches {
+									DV_COUNT matches {*}
+								}
+								lower matches {
+									DV_COUNT matches {*}
+								}
+							}
+							DV_PROPORTION matches {
+								is_integral matches {false}
+							}
+							DV_TEXT matches {*}
+							DV_BOOLEAN matches {*}
+						}
+					}
+					ELEMENT[at0004] occurrences matches {0..1} matches {    -- Dose amount
+						value matches {
+							C_DV_QUANTITY <
+								property = <[openehr::380]>
+								list = <
+									["1"] = <
+										units = <"1">
+										magnitude = <|>=0.0|>
+									>
+								>
+							>
+						}
+					}
+					ELEMENT[at0006] occurrences matches {0..1} matches {    -- Dose administration rate
+						value matches {
+							C_DV_QUANTITY <
+								property = <[openehr::126]>
+								list = <
+									["1"] = <
+										units = <"l/h">
+										magnitude = <|>=0.0|>
+									>
+									["2"] = <
+										units = <"ml/h">
+										magnitude = <|>=0.0|>
+									>
+									["3"] = <
+										units = <"ml/min">
+										magnitude = <|>=0.0|>
+									>
+									["4"] = <
+										units = <"ml/s">
+										magnitude = <|>=0.0|>
+									>
+								>
+							>
+						}
+					}
+					ELEMENT[at0007] occurrences matches {0..*} matches {    -- Dosage formula
+						value matches {
+							DV_TEXT matches {*}
+						}
+					}
+				}
+			}
+		}
+	}
+
+ontology
+	term_definitions = <
+		["en"] = <
+			items = <
+				["at0000"] = <
+					text = <"Conditional medication instructions">
+					description = <"Details of conditions on which determine the dose amount or administration rate.">
+				>
+				["at0002"] = <
+					text = <"Condition">
+					description = <"The value which is required for the associated dose amount or admistration to be applied.">
+				>
+				["at0004"] = <
+					text = <"Dose amount">
+					description = <"The dose amount to be administered if the condition applies.">
+				>
+				["at0005"] = <
+					text = <"Condition rule">
+					description = <"Details of the condition and associated dose amount or administration rate.">
+				>
+				["at0006"] = <
+					text = <"Dose administration rate">
+					description = <"The dose administration rate to be used if the condition applies.">
+				>
+				["at0007"] = <
+					text = <"Dosage formula">
+					description = <"The dosage formula used to calculate the dose amount or administration rate.">
+				>
+				["at0008"] = <
+					text = <"Condition name">
+					description = <"The name or short description of the condition which is required for the associated dose amount or admistration to be applied.">
+					comment = <"For example: serum blood glucose; systolic blood pressure; INR.
+If possible, coding with a terminology such as SNOMED-CT or LOINC is recommended, especially with measurable conditions such as vital parameters, to make the condition computable.">
+				>
+			>
+		>
+		["de"] = <
+			items = <
+				["at0000"] = <
+					text = <"Reservebedingungen">
+					description = <"Einzelheiten zu den Bedingungen, unter denen die Dosismenge oder die Verabreichungsrate festgelegt wird.">
+				>
+				["at0002"] = <
+					text = <"Bedingung">
+					description = <"Der Wert, der für die zu verabreichende Dosismenge oder Verabreichung erforderlich ist.">
+				>
+				["at0004"] = <
+					text = <"Dosis">
+					description = <"Die zu verabreichende Dosis, wenn die Bedingung zutrifft.">
+				>
+				["at0005"] = <
+					text = <"Bedingungsregel">
+					description = <"Einzelheiten zur Bedingung und der damit verbundenen Dosis oder Verabreichungsrate.">
+				>
+				["at0006"] = <
+					text = <"Verabreichungsrate">
+					description = <"Die zu verwendende Dosierungsrate, wenn die Bedingung zutrifft.">
+				>
+				["at0007"] = <
+					text = <"Dosierungsformel">
+					description = <"Die Dosierungsformel, die zur Berechnung der Dosismenge oder Verabreichungsrate verwendet wird.">
+				>
+				["at0008"] = <
+					text = <"Bedingungsname">
+					description = <"Der Name oder die kurze Beschreibung der Bedingung, die für die Verabreichung der entsprechenden Dosis oder Anwendung erforderlich ist.">
+					comment = <"Beispiele: Serumblutzucker, systolischer Blutdruck, INR.
+Wenn möglich, wird die Kodierung mit einer Terminologie wie SNOMED-CT oder LOINC empfohlen, insbesondere bei messbaren Zuständen wie Vitalparametern, um die Bedingung berechenbar zu machen.">
+				>
+			>
+		>
+		["fr"] = <
+			items = <
+				["at0000"] = <
+					text = <"*Conditional medication instructions (en)">
+					description = <"*Details of conditions on which determine the dose amount or administration rate. (en)">
+				>
+				["at0002"] = <
+					text = <"*Condition (en)">
+					description = <"*The value which is required for the associated dose amount or admistration to be applied. (en)">
+				>
+				["at0004"] = <
+					text = <"*Dose amount (en)">
+					description = <"*The dose amount to be administered if the condition applies. (en)">
+				>
+				["at0005"] = <
+					text = <"*Condition rule (en)">
+					description = <"*Details of the condition and associated dose amount or administration rate. (en)">
+				>
+				["at0006"] = <
+					text = <"*Dose administration rate (en)">
+					description = <"*The dose administration rate to be used if the condition applies. (en)">
+				>
+				["at0007"] = <
+					text = <"*Dosage formula (en)">
+					description = <"*The dosage formula used to calculate the dose amount or administration rate. (en)">
+				>
+				["at0008"] = <
+					text = <"*Condition name (en)">
+					description = <"*The name or short description of the condition which is required for the associated dose amount or admistration to be applied. (en)">
+					comment = <"*For example: serum blood glucose; systolic blood pressure; INR.
+If possible, coding with a terminology such as SNOMED-CT or LOINC is recommended, especially with measurable conditions such as vital parameters, to make the condition computable. (en)">
+				>
+			>
+		>
+	>

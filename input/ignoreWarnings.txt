@@ -1,0 +1,4 @@
+== Suppressed Messages ==
+
+# Intentionally empty. Messages caused by the draft openEHR support in the IG Publisher
+# and the openehr.base package are documented on the Known Issues page instead of being suppressed.

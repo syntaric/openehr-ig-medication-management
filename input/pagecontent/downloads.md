@@ -1,0 +1,34 @@
+### Template
+
+| File | Description |
+|---|---|
+| [cistec.openehr.medication_order.v1.opt](cistec.openehr.medication_order.v1.opt) | **Operational template** (OPT 1.4 XML). Upload this file to an openEHR CDR (e.g. `POST /definition/template/adl1.4`) to use the template |
+| [cistec.openehr.medication_order.v1.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/templates/cistec.openehr.medication_order.v1.json) | **Web template** (JSON) as exported from Archetype Designer. This is the source of the [WebTemplate page](WebTemplate-cistec.openehr.medicationorder.v1.html) and of the FLAT paths in the [Examples](examples.html) |
+| [WebTemplate-cistec.openehr.medicationorder.v1.json](../WebTemplate-cistec.openehr.medicationorder.v1.json) | The web template as read back by the IG Publisher. It is normalised and loses some properties, e.g. `semVer` |
+{:.grid}
+
+### Archetypes
+
+Each rendered archetype shows its ADL source on the **ADL** tab of its [logical model page](artifacts.html). The three archetypes that the publisher cannot render yet (see [Known Issues](known-issues.html#archetypes-not-rendered)) are available here as ADL 1.4 files:
+
+- [openEHR-EHR-ACTION.medication.v1.adl](openEHR-EHR-ACTION.medication.v1.adl)
+- [openEHR-EHR-CLUSTER.case_identification.v0.adl](openEHR-EHR-CLUSTER.case_identification.v0.adl)
+- [openEHR-EHR-CLUSTER.conditional_medication_rules_cistec.v1.adl](openEHR-EHR-CLUSTER.conditional_medication_rules_cistec.v1.adl)
+
+All fifteen ADL files are also in the [source repository](https://github.com/syntaric/openehr-ig-medication-management/tree/main/input).
+
+### Examples
+
+The FLAT JSON examples can be downloaded directly:
+
+- [example-oral-schema.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-oral-schema.json)
+- [example-iv-rate-therapy.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-iv-rate-therapy.json)
+- [example-conditional-prn.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-conditional-prn.json)
+
+### Implementation guide
+
+| File | Description |
+|---|---|
+| [package.tgz](../package.tgz) | NPM package of this IG (logical models, CodeSystems, ValueSets, WebTemplate) for use as a dependency |
+| [full-ig.zip](../full-ig.zip) | The complete website of this IG, for offline use |
+{:.grid}

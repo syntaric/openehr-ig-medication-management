@@ -1,0 +1,274 @@
+archetype (adl_version=1.4; rm_release=1.1.0; uid=28973c57-49a1-4d58-9954-f893b5ca053b)
+	openEHR-EHR-CLUSTER.unit_conversion_reference_cistec.v1
+
+concept
+	[at0000]
+
+language
+	original_language = <[ISO_639-1::en]>
+	translations = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			author = <
+			>
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			author = <
+				["name"] = <"Hendrik Heiser">
+				["organisation"] = <"Cistec AG">
+				["email"] = <"hendrik.heiser@cistec.com">
+			>
+		>
+	>
+
+description
+	original_author = <
+		["date"] = <"2025-09-03">
+		["name"] = <"Hendrik Heiser">
+		["organisation"] = <"Cistec AG">
+		["email"] = <"hendrik.heiser@cistec.com">
+	>
+	lifecycle_state = <"in_development">
+	details = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			purpose = <"Bereitstellung einer technischen Referenz auf den Datensatz und den Eintrag, die eine Umrechnung der dokumentierten Dosiseinheit in andere Einheiten ermöglichen.">
+			keywords = <"Einheit, Umrechnung, Referenz, Provenienz, Mapping, Dosierung, Medikament, Berechnung", ...>
+			copyright = <"© openEHR Foundation">
+			use = <"Dieser Cluster wird im Protokoll-Abschnitt einer Medikamentenverordnung (cistec.openehr.medication_order) oder -verabreichung (cistec.openehr.medication_administration) eingesetzt, um die Umrechnungsbasis der Einheit sowie die eindeutige Kennung des entsprechenden Tabelleneintrags festzulegen. Damit wird gewährleistet, dass IT-Systeme Umrechnungen zwischen verschiedenen Einheiten (z. B. substanzbasiert vs. produktspezifisch) zuverlässig durchführen und reproduzieren können.">
+			misuse = <"- Nicht zur Dokumentation klinischer Inhalte wie Dosis, Einheit oder Substanz verwenden — diese gehören in den Dosierungs-Cluster (openEHR-EHR-CLUSTER.dosage.v2).
+- Nicht zur Speicherung beliebiger technischer Metadaten ohne Bezug zur Einheitenumrechnung nutzen.
+- Nicht als Ersatz für formale Terminologie-Bindungen einsetzen; Substanzen und Einheiten sind weiterhin mit geeigneten Terminologien (z. B. HCI hospINDEX, UCUM) zu kodieren.">
+		>
+		["en"] = <
+			language = <[ISO_639-1::en]>
+			purpose = <"To provide a technical reference to the dataset and record that enables conversion of a recorded dose unit into other units.">
+			keywords = <"unit, conversion, reference, provenance, mapping, dosage, medication, calculation", ...>
+			use = <"Use this cluster within the protocol section of cistec.openehr.medication_order or cistec.openehr.medication_administration (or other relevant entry) to specify the unit conversion basis and a unique identifier of the corresponding table entry. This ensures that computational systems can reliably resolve and reproduce conversions between different unit representations (e.g., substance-based vs. proprietary product-based units).">
+			misuse = <"- Do not use this cluster to record clinical content such as the actual dose, unit, or substance — these belong in the Dosage cluster (openEHR-EHR-CLUSTER.dosage.v2).
+- Do not use it to store arbitrary technical metadata not related to unit conversion.
+- Do not substitute it for formal terminology binding; substances and units should still be coded with appropriate terminologies (e.g., HCI hospINDEX, UCUM).">
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			purpose = <"Fournir une référence technique relative à l'ensemble de données et à l'enregistrement permettant la conversion d'une unité de dose enregistrée en d'autres unités.">
+			keywords = <"unité, conversion, référence, provenance, mise en correspondance, posologie, médicament, calcul", ...>
+			copyright = <"© openEHR Foundation">
+			use = <"Utilisez ce groupe dans la section « protocole » de cistec.openehr.medication_order ou cistec.openehr.medication_administration (ou toute autre entrée pertinente) pour spécifier la base de conversion des unités et un identifiant unique de l’entrée correspondante dans la table. Cela garantit que les systèmes informatiques peuvent résoudre et reproduire de manière fiable les conversions entre différentes représentations d’unités (par exemple, unités basées sur la substance par opposition à celles basées sur un produit commercial).">
+			misuse = <"- N’utilisez pas ce cluster pour enregistrer des informations cliniques telles que la dose réelle, l’unité ou la substance — celles-ci relèvent du cluster « Dosage » (openEHR-EHR-CLUSTER.dosage.v2).
+- Ne l'utilisez pas pour enregister des métadonnées techniques arbitraires sans rapport avec la conversion d'unités.
+- Ne l'utilisez pas en remplacement d'une liaison terminologique formelle ; les substances et les unités doivent toujours être codées à l'aide des terminologies appropriées (par exemple, HCI hospINDEX, UCUM).">
+		>
+	>
+	other_details = <
+		["licence"] = <"This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.">
+		["custodian_organisation"] = <"openEHR Foundation">
+		["original_namespace"] = <"org.openehr">
+		["original_publisher"] = <"openEHR Foundation">
+		["custodian_namespace"] = <"org.openehr">
+		["MD5-CAM-1.0.1"] = <"7d2c072ff06102f04fa0faa4bbe4d1bd">
+		["build_uid"] = <"8a03d062-8ebc-39a4-80ae-c5df897b719f">
+		["revision"] = <"1.0.0">
+	>
+
+definition
+	CLUSTER[at0000] matches {    -- Unit conversion reference
+		items cardinality matches {1..*; unordered} matches {
+			ELEMENT[at0011] occurrences matches {0..1} matches {    -- Unit ID
+				value matches {
+					DV_TEXT matches {*}
+				}
+			}
+			ELEMENT[at0012] occurrences matches {0..1} matches {    -- Substance ID
+				value matches {
+					DV_TEXT matches {*}
+				}
+			}
+			ELEMENT[at0010] occurrences matches {0..1} matches {    -- Referenced dose
+				value matches {
+					DV_TEXT matches {*}
+				}
+			}
+			ELEMENT[at0002] occurrences matches {0..1} matches {    -- Unit type
+				value matches {
+					DV_CODED_TEXT matches {
+						defining_code matches {
+							[local::
+							at0005,    -- SubstanceQuantityUnit
+							at0006,    -- BaseQuantityUnit
+							at0007,    -- ProprietaryQuantityUnit
+							at0008,    -- StandardQuantityUnit
+							at0009]    -- FallbackUnit
+						}
+					}
+				}
+			}
+			ELEMENT[at0004] occurrences matches {0..1} matches {    -- Reference ID
+				value matches {
+					DV_TEXT matches {*}
+				}
+			}
+		}
+	}
+
+ontology
+	term_definitions = <
+		["en"] = <
+			items = <
+				["at0000"] = <
+					text = <"Unit conversion reference">
+					description = <"Carries an implementation-specific reference that indicates which entry within the reference dataset enables calculation between the recorded dose unit and other units.">
+					comment = <"Intended solely for computational provenance and reproducibility. The clinical content (dose, units, substances) remains in the Dosage cluster openEHR-EHR-CLUSTER.dosage.v2; this CLUSTER only points to the conversion resource.">
+				>
+				["at0002"] = <
+					text = <"Unit type">
+					description = <"Indicates which conversion table/category is applicable for resolving this unit.">
+					comment = <"OBSOLETE - only included in the data model for backwards compatibility.">
+				>
+				["at0004"] = <
+					text = <"Reference ID">
+					description = <"UUID of the record in the selected table (\"Unit type\") that defines the conversion for this unit.">
+					comment = <"OBSOLETE - only included in the data model for backwards compatibility.
+Must be a stable UUID for the referenced row. The UUID itself is versioned, making an additional version data element unnecessary.">
+				>
+				["at0005"] = <
+					text = <"SubstanceQuantityUnit">
+					description = <"">
+				>
+				["at0006"] = <
+					text = <"BaseQuantityUnit">
+					description = <"">
+				>
+				["at0007"] = <
+					text = <"ProprietaryQuantityUnit">
+					description = <"">
+				>
+				["at0008"] = <
+					text = <"StandardQuantityUnit">
+					description = <"">
+				>
+				["at0009"] = <
+					text = <"FallbackUnit">
+					description = <"">
+				>
+				["at0010"] = <
+					text = <"Referenced dose">
+					description = <"Identifier or label for the specific dose that is referenced by this CLUSTER instance. Used for medication orders that contain two or more different doses.">
+					comment = <"The exact form or syntax of the identifier is not defined in the model. If the order only contains one dose, this field is not necessary and should be omitted or set to the default value \"DEFAULT\".">
+				>
+				["at0011"] = <
+					text = <"Unit ID">
+					description = <"UUID of the unit that defines the conversion of the ordered medication dose.">
+				>
+				["at0012"] = <
+					text = <"Substance ID">
+					description = <"UUID of the substance that defines the conversion of the ordered medication dose.">
+				>
+			>
+		>
+		["de"] = <
+			items = <
+				["at0000"] = <
+					text = <"Referenz für Einheitenumrechnung">
+					description = <"Enthält eine systemtechnische Referenz, die angibt, welcher Eintrag innerhalb der Stammdaten die Berechnung zwischen der dokumentierten Dosiseinheit und anderen Einheiten ermöglicht.">
+					comment = <"Dieser Cluster dient ausschließlich der technischen Nachvollziehbarkeit und Reproduzierbarkeit. Die klinischen Inhalte (Dosis, Einheiten, Substanzen) werden im Dosierungs-Cluster openEHR-EHR-CLUSTER.dosage.v2 dokumentiert; dieser Cluster verweist lediglich auf die Umrechnungsressource.">
+				>
+				["at0002"] = <
+					text = <"Einheitstyp">
+					description = <"Bestimmt, welche Umrechnungstabelle für die Auflösung dieser Einheit heranzuziehen ist.">
+					comment = <"OBSOLET - nur für Rückwärtskompatibilität im Datenmodell enthalten.">
+				>
+				["at0004"] = <
+					text = <"Referenz-ID">
+					description = <"UUID des Datensatzes in der unter \"Einheitstyp\" ausgewählten Tabelle, der die Umrechnung für diese Einheit definiert.">
+					comment = <"OBSOLET - nur für Rückwärtskompatibilität im Datenmodell enthalten.
+Muss eine stabile UUID des referenzierten Tabelleneintrags sein. Die UUID ist selbst versioniert, eine weitere Versionsangabe deshalb überflüssig.">
+				>
+				["at0005"] = <
+					text = <"SubstanceQuantityUnit">
+					description = <"">
+				>
+				["at0006"] = <
+					text = <"BaseQuantityUnit">
+					description = <"">
+				>
+				["at0007"] = <
+					text = <"ProprietaryQuantityUnit">
+					description = <"">
+				>
+				["at0008"] = <
+					text = <"StandardQuantityUnit">
+					description = <"">
+				>
+				["at0009"] = <
+					text = <"FallbackUnit">
+					description = <"">
+				>
+				["at0010"] = <
+					text = <"Referenzierte Dosis">
+					description = <"ID oder Label für die spezifische Dosis, auf die sich diese CLUSTER-Instanz bezieht. Wird bei Medikamentenverordnungen verwendet, die zwei oder mehr verschiedene Dosen enthalten.">
+					comment = <"Die genaue Form oder Syntax der ID ist im Datenmodell nicht definiert. Enthält die Verordnung nur eine Dosis, ist dieses Feld nicht erforderlich und sollte weggelassen oder auf den Standardwert „DEFAULT“ gesetzt werden.">
+				>
+				["at0011"] = <
+					text = <"Einheits-ID">
+					description = <"UUID der Einheit, die die Umrechnung der verordneten Arzneimitteldosis definiert.">
+				>
+				["at0012"] = <
+					text = <"Substanz-ID">
+					description = <"UUID der Substanz, die die Umrechnung der verordneten Arzneimitteldosis definiert.">
+				>
+			>
+		>
+		["fr"] = <
+			items = <
+				["at0000"] = <
+					text = <"Référence de conversion des unités">
+					description = <"Comporte une référence spécifique à la mise en œuvre qui indique quelle table de conversion utiliser et quelle entrée de cette table permet d'effectuer le calcul entre l'unité de dose enregistrée et d'autres unités.">
+					comment = <"Destiné exclusivement à la traçabilité et à la reproductibilité des calculs. Le contenu clinique (dose, unités, substances) reste dans le cluster « Dosage » openEHR-EHR-CLUSTER.dosage.v2 ; ce CLUSTER renvoie uniquement à la ressource de conversion.">
+				>
+				["at0002"] = <
+					text = <"Type d'unité">
+					description = <"Indique quelle table de conversion ou catégorie s'applique pour la résolution de cette unité.">
+				>
+				["at0004"] = <
+					text = <"Identifiant de référence">
+					description = <"UUID de l'enregistrement dans la table sélectionnée (« Type d'unité ») qui définit la conversion pour cette unité.">
+					comment = <"Il doit s’agir d’un UUID stable pour la ligne référencée. L’UUID lui-même étant versionné, un élément de données de version supplémentaire n’est pas nécessaire.">
+				>
+				["at0005"] = <
+					text = <"SubstanceQuantitéUnité">
+					description = <"">
+				>
+				["at0006"] = <
+					text = <"BaseQuantityUnit">
+					description = <"">
+				>
+				["at0007"] = <
+					text = <"Unité de quantité propriétaire">
+					description = <"">
+				>
+				["at0008"] = <
+					text = <"Unité de quantité standard">
+					description = <"">
+				>
+				["at0009"] = <
+					text = <"Unité de secours">
+					description = <"">
+				>
+				["at0010"] = <
+					text = <"Dose de référence">
+					description = <"Identifiant ou libellé de la dose spécifique à laquelle fait référence cette instance CLUSTER. Utilisé pour les ordonnances contenant au moins deux doses différentes.">
+					comment = <"La forme ou la syntaxe exacte de l’identifiant n’est pas définie dans le modèle. Si la prescription ne contient qu’une seule dose, ce champ n’est pas nécessaire et doit être défini sur la valeur par défaut « DEFAULT ».">
+				>
+				["at0011"] = <
+					text = <"Identifiant d'unité">
+					description = <"*UUID of the unit that defines the conversion of the ordered medication dose.(en)">
+				>
+				["at0012"] = <
+					text = <"Identifiant de substance">
+					description = <"*UUID of the substance that defines the conversion of the ordered medication dose.(en)">
+				>
+			>
+		>
+	>

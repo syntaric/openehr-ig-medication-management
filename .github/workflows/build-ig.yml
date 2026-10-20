@@ -1,0 +1,115 @@
+name: Build IG and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # "latest" or a release tag of https://github.com/HL7/fhir-ig-publisher (e.g. 2.0.15)
+  PUBLISHER_VERSION: latest
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Jekyll and Graphviz
+        run: |
+          gem install jekyll
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Cache FHIR packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.fhir/packages
+          key: fhir-packages-${{ hashFiles('ig.ini', 'input/*.xml') }}
+          restore-keys: fhir-packages-
+
+      - name: Download IG Publisher
+        run: |
+          V="${PUBLISHER_VERSION}"
+          if [ "$V" = "latest" ]; then
+            URL="https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar"
+          else
+            URL="https://github.com/HL7/fhir-ig-publisher/releases/download/$V/publisher.jar"
+          fi
+          mkdir -p input-cache
+          curl -fsSL --retry 3 -o input-cache/publisher.jar "$URL"
+
+      - name: Run IG Publisher
+        run: |
+          java -jar input-cache/publisher.jar -v 2>/dev/null | head -n 1 > publisher-version.txt || true
+          java -Xmx6g -jar input-cache/publisher.jar -ig . -no-sushi
+
+      - name: QA summary
+        if: always()
+        # Informational only: openEHR support in the IG Publisher is still draft.
+        run: |
+          if [ -f output/qa.json ]; then
+            PUBLISHER="$(cat publisher-version.txt 2>/dev/null || echo "${PUBLISHER_VERSION}")"
+            jq -r --arg publisher "$PUBLISHER" '"## IG Publisher QA",
+                   "",
+                   "| | |",
+                   "|---|---|",
+                   "| Errors | \(.errs) |",
+                   "| Warnings | \(.warnings) |",
+                   "| Hints | \(.hints) |",
+                   "| Publisher version | \($publisher) |",
+                   "| Validator (core) version | \(.tool) |",
+                   "| FHIR version | \(.version) |"' output/qa.json >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "output/qa.json not found: the IG Publisher did not produce a QA report." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: |
+            output/qa.html
+            output/qa*.json
+          if-no-files-found: warn
+
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

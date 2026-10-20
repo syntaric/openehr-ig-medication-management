@@ -1,0 +1,226 @@
+archetype (adl_version=1.4; rm_release=1.1.0; uid=583a4571-5fbe-4824-8cce-d41510810b23)
+	openEHR-EHR-CLUSTER.mixture_medium_selection_cistec.v1
+
+concept
+	[at0000]
+
+language
+	original_language = <[ISO_639-1::en]>
+	translations = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			author = <
+				["application"] = <"Adl Designer">
+			>
+			other_details = <
+				["notes"] = <"Generated automatically by Adl Designer">
+			>
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			author = <
+				["application"] = <"Adl Designer">
+			>
+			other_details = <
+				["notes"] = <"Generated automatically by Adl Designer">
+			>
+		>
+	>
+
+description
+	original_author = <
+		["date"] = <"2026-07-22">
+		["name"] = <"Hendrik heiser">
+		["organisation"] = <"CISTEC AG">
+		["email"] = <"hendrik.heiser@cistec.com">
+	>
+	lifecycle_state = <"in_development">
+	details = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			purpose = <"Zur Dokumentation, wie eine Trägerlösung oder ein Lösungsmittel bei der Zubereitung eines Medikaments verwendet werden soll.">
+			keywords = <"Medikation","Zubereitung","Trägerlösung","Lösungsmittel","Verdünnungsmittel","Alternative","Option">
+			use = <"Im Structured details SLOT einer CLUSTER.medication-Instanz verwenden, die eine Trägerlösung oder ein Lösungsmittel repräsentiert. Zur Kennzeichnung, ob das Medium erforderlich ist oder zu einer Gruppe alternativer Zubereitungsmedien gehört.">
+			misuse = <"Nicht zur Dokumentation von Dosis, Stärke, Konzentration, Menge oder Kompatibilitätsinformationen verwenden. Nicht zur Dokumentation des bei der Verabreichung tatsächlich verwendeten Mediums verwenden.">
+		>
+		["en"] = <
+			language = <[ISO_639-1::en]>
+			purpose = <"To record how a carrier solution or solvent is to be used in the preparation of a medication.">
+			keywords = <"medication","preparation","carrier solution","solvent","diluent","alternative","option">
+			use = <"Use in the Structured details SLOT of a CLUSTER.medication instance representing a carrier solution or solvent. Use to indicate whether the medium is required, or belongs to a group of alternative preparation media.">
+			misuse = <"Not to be used to record the medication dose, strength, concentration, amount or compatibility information. Not to be used for recording the medium actually used during administration.">
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			purpose = <"Enregistrer comment une solution porteuse ou un solvant doit être utilisé pour la préparation d'un médicament.">
+			keywords = <"médicament","préparation","solution porteuse","solvant","diluant","alternative","option">
+			use = <"À utiliser dans le SLOT Structured details d'une instance CLUSTER.medication représentant une solution porteuse ou un solvant. Permet d'indiquer si le milieu est requis ou s'il appartient à un groupe de milieux de préparation alternatifs.">
+			misuse = <"Ne pas utiliser pour enregistrer la dose, le dosage, la concentration, la quantité ou des informations de compatibilité. Ne pas utiliser pour enregistrer le milieu effectivement utilisé lors de l'administration.">
+		>
+	>
+	other_details = <
+		["licence"] = <"This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.">
+		["custodian_organisation"] = <"CISTEC AG">
+		["current_contact"] = <"Hendrik Heiser">
+		["original_namespace"] = <"com.cistec">
+		["original_publisher"] = <"CISTEC AG">
+		["custodian_namespace"] = <"com.cistec">
+		["MD5-CAM-1.0.1"] = <"c37a6147bb0e84d8b96c9d79a086a902">
+		["build_uid"] = <"4e4fe299-3478-3c0e-80af-345f87194de9">
+		["revision"] = <"1.0.0-alpha.1">
+	>
+
+definition
+	CLUSTER[at0000] matches {    -- Mixture medium selection
+		items cardinality matches {1..*; unordered} matches {
+			ELEMENT[at0001] matches {    -- Medium use
+				value matches {
+					DV_CODED_TEXT matches {
+						defining_code matches {
+							[local::
+							at0002,    -- Required
+							at0003]    -- Alternative
+						}
+					}
+				}
+			}
+			ELEMENT[at0005] matches {    -- Option identifier
+				value matches {
+					DV_IDENTIFIER matches {*}
+				}
+			}
+			ELEMENT[at0006] occurrences matches {0..1} matches {    -- Selection rule
+				value matches {
+					DV_CODED_TEXT matches {
+						defining_code matches {
+							[local::
+							at0007,    -- Exactly one option
+							at0008]    -- One or more options
+						}
+					}
+					DV_TEXT matches {*}
+				}
+			}
+		}
+	}
+
+ontology
+	term_definitions = <
+		["en"] = <
+			items = <
+				["at0000"] = <
+					text = <"Mixture medium selection">
+					description = <"Details about whether a carrier solution or solvent is required or represents one of several alternative options for medication preparation.">
+				>
+				["at0001"] = <
+					text = <"Medium use">
+					description = <"The intended use of this mixture medium in the medication order.">
+					comment = <"Use 'Required' when the medium is definitely part of the ordered mixture. Use 'Alternative' when the medium is one possible option within an option group.">
+				>
+				["at0002"] = <
+					text = <"Required">
+					description = <"The mixture medium is required as part of the medication preparation.">
+				>
+				["at0003"] = <
+					text = <"Alternative">
+					description = <"The preparation medium is one possible option within an option group.">
+				>
+				["at0005"] = <
+					text = <"Option identifier">
+					description = <"Identifier of a specific option within an option group.">
+					comment = <"Use the same option identifier for multiple media that must be used together as one option, for example [NaCl 50 ml + glucose 50 ml]. Use different option identifiers for mutually exclusive alternatives.">
+				>
+				["at0006"] = <
+					text = <"Selection rule">
+					description = <"Rule for selecting options from the option group.">
+					comment = <"The value should be identical for all members of the same option group. Usually omitted when the inclusion type is 'Required'.">
+				>
+				["at0007"] = <
+					text = <"Exactly one option">
+					description = <"Exactly one option from the option group is to be selected.">
+				>
+				["at0008"] = <
+					text = <"One or more options">
+					description = <"One or more options from the option group may be selected.">
+				>
+			>
+		>
+		["de"] = <
+			items = <
+				["at0000"] = <
+					text = <"Auswahl des Mischungsmediums">
+					description = <"Angaben dazu, ob eine Trägerlösung oder ein Lösungsmittel definitiv erforderlich ist oder eine von mehreren Alternativen für die Zubereitung des Medikaments darstellt.">
+				>
+				["at0001"] = <
+					text = <"Verwendungsart">
+					description = <"Die vorgesehene Verwendung dieses Mischungsmediums in der Medikationsverordnung.">
+					comment = <"'Erforderlich' verwenden, wenn das Medium Teil der verordneten Mischung ist. 'Alternative' verwenden, wenn das Medium eine mögliche Option innerhalb einer Optionsgruppe ist.">
+				>
+				["at0002"] = <
+					text = <"Erforderlich">
+					description = <"Das Mischungsmedium ist als Teil der Medikamentenzubereitung erforderlich.">
+				>
+				["at0003"] = <
+					text = <"Alternative">
+					description = <"Das Mischungsmedium ist eine mögliche Option innerhalb einer Optionsgruppe.">
+				>
+				["at0005"] = <
+					text = <"Options-ID">
+					description = <"ID einer bestimmten Option innerhalb einer Optionsgruppe.">
+					comment = <"Dieselbe Options-ID für mehrere Medien verwenden, die zusammen eine Option bilden, zum Beispiel [NaCl 50 ml + Glucose 50 ml]. Unterschiedliche Options-IDs für sich gegenseitig ausschliessende Alternativen verwenden.">
+				>
+				["at0006"] = <
+					text = <"Auswahlregel">
+					description = <"Regel für die Auswahl von Optionen aus der Optionsgruppe.">
+					comment = <"Der Wert sollte bei allen Einträgen derselben Optionsgruppe identisch sein. Bei Verwendungsart 'Erforderlich' in der Regel weglassen.">
+				>
+				["at0007"] = <
+					text = <"Genau eine Option">
+					description = <"Aus der Optionsgruppe ist genau eine Option auszuwählen.">
+				>
+				["at0008"] = <
+					text = <"Eine oder mehrere Optionen">
+					description = <"Aus der Optionsgruppe können eine oder mehrere Optionen ausgewählt werden.">
+				>
+			>
+		>
+		["fr"] = <
+			items = <
+				["at0000"] = <
+					text = <"Sélection du milieu de préparation">
+					description = <"Informations indiquant si une solution porteuse ou un solvant est requis ou représente une option alternative pour la préparation du médicament.">
+				>
+				["at0001"] = <
+					text = <"Type d'utilisation">
+					description = <"L'utilisation prévue de ce milieu de mélange dans la prescription médicamenteuse.">
+					comment = <"Utiliser 'Requis' lorsque le milieu fait partie de la préparation prescrite. Utiliser 'Alternative' lorsque le milieu est une option possible dans un groupe d'options.">
+				>
+				["at0002"] = <
+					text = <"Requis">
+					description = <"Le milieu de préparation est requis dans le cadre de la préparation du médicament.">
+				>
+				["at0003"] = <
+					text = <"Alternative">
+					description = <"Le milieu de préparation est une option possible dans un groupe d'options.">
+				>
+				["at0005"] = <
+					text = <"Identifiant de l'option">
+					description = <"Identifiant d'une option spécifique dans un groupe d'options.">
+					comment = <"Utiliser le même identifiant d'option pour plusieurs milieux qui doivent être utilisés ensemble comme une seule option, par exemple [NaCl 50 ml + glucose 50 ml]. Utiliser des identifiants d'option différents pour des alternatives mutuellement exclusives.">
+				>
+				["at0006"] = <
+					text = <"Règle de sélection">
+					description = <"Règle de sélection des options dans le groupe d'options.">
+					comment = <"La valeur devrait être identique pour tous les membres du même groupe d'options. Généralement omise lorsque le type d'utilisation est 'Requis'.">
+				>
+				["at0007"] = <
+					text = <"Exactement une option">
+					description = <"Exactement une option du groupe d'options doit être sélectionnée.">
+				>
+				["at0008"] = <
+					text = <"Une ou plusieurs options">
+					description = <"Une ou plusieurs options du groupe d'options peuvent être sélectionnées.">
+				>
+			>
+		>
+	>

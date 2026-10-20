@@ -1,0 +1,125 @@
+archetype (adl_version=1.4; rm_release=1.1.0; uid=6d1cc0c5-d48b-4ea9-832d-6b73582b7114)
+	openEHR-EHR-CLUSTER.dose_lead_cistec.v1
+
+concept
+	[at0000]
+
+language
+	original_language = <[ISO_639-1::en]>
+	translations = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			author = <
+				["application"] = <"Adl Designer">
+			>
+			other_details = <
+				["notes"] = <"Generated automatically by Adl Designer">
+			>
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			author = <
+				["application"] = <"Adl Designer">
+			>
+			other_details = <
+				["notes"] = <"Generated automatically by Adl Designer">
+			>
+		>
+	>
+
+description
+	original_author = <
+		["date"] = <"2026-07-16">
+		["name"] = <"Hendrik Heiser">
+		["organisation"] = <"CISTEC AG">
+		["email"] = <"hendrik.heiser@cistec.com">
+	>
+	lifecycle_state = <"in_development">
+	details = <
+		["de"] = <
+			language = <[ISO_639-1::de]>
+			purpose = <"Kennzeichnung der Arzneimittelkomponente, die innerhalb strukturierter Medikationsdetails als Grundlage für die Dosisberechnung verwendet wurde.">
+			keywords = <"Medikation","Dosisberechnung","Dosierungsgrundlage","Substanz","Inhaltsstoff","Kombinationsprodukt">
+			use = <"Im Structured details SLOT einer CLUSTER.medication-Instanz verwenden, die eine Substanz, Substanzgruppe oder ein Kombinationsprodukt repräsentiert. 'Ist Dosierungsgrundlage' auf True setzen, wenn diese Komponente durch die verordnende Person oder Software als Grundlage der Dosisberechnung gewählt wurde.">
+			misuse = <"Nicht zur Dokumentation von Dosis, Stärke, Konzentration, Menge, Dosiseinheit, therapeutischer Bedeutung oder Rolle eines Inhaltsstoffs verwenden. Kein Ersatz für explizite Angaben zu Arzneimittelbestandteilen.">
+		>
+		["en"] = <
+			language = <[ISO_639-1::en]>
+			purpose = <"To identify the medication component used as the basis for dose calculation within structured medication details.">
+			keywords = <"medication","dose calculation","dosage lead","substance","ingredient","combination product">
+			use = <"Use in the Structured details SLOT of a CLUSTER.medication instance representing a substance, ingredient group or combination product. Set 'Is dosage lead' to True for the component selected by the prescriber or software as the dose calculation basis.">
+			misuse = <"Not to be used to record the dose, strength, concentration, amount, dose unit, therapeutic importance or ingredient role. Not a substitute for explicit medication constituent details.">
+		>
+		["fr"] = <
+			language = <[ISO_639-1::fr]>
+			purpose = <"Identifier le composant médicamenteux utilisé comme base de calcul de la dose dans les détails structurés du médicament.">
+			keywords = <"médicament","calcul de dose","base de calcul de dose","substance","constituant","produit combiné">
+			use = <"À utiliser dans le SLOT Structured details d'une instance CLUSTER.medication représentant une substance, un groupe de substances ou un produit combiné. Définir 'Est la base de calcul de dose' sur True pour le composant choisi par le prescripteur ou le logiciel comme base de calcul de la dose.">
+			misuse = <"Ne pas utiliser pour enregistrer la dose, le dosage, la concentration, la quantité, l'unité de dose, l'importance thérapeutique ou le rôle d'un constituant. Ne remplace pas les détails explicites des constituants du médicament.">
+		>
+	>
+	other_details = <
+		["licence"] = <"This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.">
+		["custodian_organisation"] = <"CISTEC AG">
+		["current_contact"] = <"Hendrik Heiser">
+		["original_namespace"] = <"com.cistec">
+		["original_publisher"] = <"CISTEC AG">
+		["custodian_namespace"] = <"com.cistec">
+		["MD5-CAM-1.0.1"] = <"33041024742e70f79c0c3020980f4337">
+		["build_uid"] = <"3b751fb3-28fc-3ae2-b962-c5e074ceb762">
+		["revision"] = <"1.0.0-alpha.1">
+	>
+
+definition
+	CLUSTER[at0000] occurrences matches {1..*} matches {    -- Dose lead
+		items cardinality matches {1..*; unordered} matches {
+			ELEMENT[at0002] matches {    -- Is dose lead
+				value matches {
+					DV_BOOLEAN matches {*}
+				}
+			}
+		}
+	}
+
+ontology
+	term_definitions = <
+		["en"] = <
+			items = <
+				["at0000"] = <
+					text = <"Dose lead">
+					description = <"Identification of a medication component used as the basis for dose calculation.">
+				>
+				["at0002"] = <
+					text = <"Is dose lead">
+					description = <"Indicates whether this medication component was used as the basis for dose calculation.">
+					comment = <"Set to \"True\" only for the substance, ingredient group or combination product selected as the dose calculation basis. Set to False or omit otherwise.">
+				>
+			>
+		>
+		["de"] = <
+			items = <
+				["at0000"] = <
+					text = <"Lead für Dosierung">
+					description = <"Kennzeichnung eines Arzneimittelbestandteils, der als Grundlage für die Dosisberechnung verwendet wurde.">
+				>
+				["at0002"] = <
+					text = <"Ist Lead für Dosierung">
+					description = <"Gibt an, ob dieser Arzneimittelbestandteil als Grundlage für die Dosisberechnung verwendet wurde.">
+					comment = <"Nur bei der Substanz, Substanzgruppe oder dem Kombinationsprodukt auf \"True\" setzen, die bzw. das als Grundlage der Dosisberechnung ausgewählt wurde. Andernfalls auf \"False\" setzen oder weglassen.">
+				>
+			>
+		>
+		["fr"] = <
+			items = <
+				["at0000"] = <
+					text = <"Référence pour dose">
+					description = <"Identification d'un composant du médicament servant de base au calcul de la dose.">
+				>
+				["at0002"] = <
+					text = <"Est référence pour dose">
+					description = <"Indique si ce composant du médicament a servi de base au calcul de la dose.">
+					comment = <"Ne définissez cette valeur sur «True» que pour la substance, le groupe d'ingrédients ou le produit composé sélectionné comme base de calcul de la dose. Dans les autres cas, définissez cette valeur sur «False» ou ne la mentionnez pas.">
+				>
+			>
+		>
+	>

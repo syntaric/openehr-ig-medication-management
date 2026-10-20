@@ -1,0 +1,19 @@
+# IG Publisher build products
+output/
+temp/
+template/
+input-cache/
+fsh-generated/
+*.log
+# written to the repo root by the IG Publisher on every build
+Requirements-fromNarrative.json
+
+# Editors and local tooling
+.idea/
+*.iml
+.vscode/
+.nimbalyst/
+nimbalyst-local/
+
+# OS
+.DS_Store
