@@ -21,12 +21,14 @@ The content is the CISTEC inpatient medication order template `cistec.openehr.me
 ig.ini                           IG Publisher entry point
 _updatePublisher.sh              download publisher.jar into input-cache/
 _genonce.sh                      build the IG once
+scripts/FilesetToMarkmap.py      generate the template mind map (input/images/template-mindmap.html)
 input/
   openehr-medication-management.xml   ImplementationGuide resource
   archetypes/*.adl               ADL 1.4 archetypes, loaded as logical models
   templates/*.json               Archetype Designer web template, loaded as a WebTemplate
-  images/                        files copied verbatim to the site: the OPT and the ADLs
-                                 the publisher cannot load yet (downloads only)
+  images/                        files copied verbatim to the site: the OPT, the ADLs
+                                 the publisher cannot load yet (downloads only) and
+                                 the generated mind map
   includes/menu.xml              site menu
   includes/example-*.json        FLAT composition examples, shown on the Examples page
   pagecontent/*.md               narrative pages
@@ -66,6 +68,13 @@ The publisher version is set by `PUBLISHER_VERSION` in the workflow (`latest` by
 
 3. Archetypes that crash the publisher's importer go into `input/images/` instead of `input/archetypes/`. Currently these are ACTION archetypes, and archetypes whose English description has no keywords. Record any such archetype on `input/pagecontent/known-issues.md`.
 4. If node ids changed, update the FLAT examples in `input/includes/` and the walkthrough in `input/pagecontent/template.md`.
+5. Regenerate the mind map and commit the result:
+
+   ```bash
+   python scripts/FilesetToMarkmap.py --html
+   ```
+
+   This reads the web template and all ADL files under `input/`, and writes `input/images/template-mindmap.html` (and the intermediate Markdown into `temp/`). It needs Python 3.9+ (standard library only) and Node.js: `npx` fetches `markmap-cli` on first use. Without `--html` it writes only the Markdown, e.g. for the markmap VS Code extension. See `python scripts/FilesetToMarkmap.py --help` for the options.
 
 ## Licence
 

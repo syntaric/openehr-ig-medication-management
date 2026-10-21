@@ -1,5 +1,7 @@
 This page walks through the operational template `cistec.openehr.medication_order.v1`. The complete tree, with every node, occurrence, data type and value list, is on the **[WebTemplate page](WebTemplate-cistec.openehr.medicationorder.v1.html)**. Node names below are the web-template ids used in FLAT paths, with the archetype in brackets.
 
+For an overview, the **[interactive mind map](template-mindmap.html)** shows the same tree. Slot fills are grouped under the slot they fill, hovering a node shows its description, and coded values are listed under a collapsed *Value set* node.
+
 ### Context
 
 | Node | Occurrences | Content |
