@@ -778,7 +778,25 @@ def render_web_template(path, opts):
     return wt.get("templateId") or "Web template", body
 
 
-def build_html(md_path, html_path, title):
+# The IG Publisher QA-checks every HTML file in the output, including ones
+# copied verbatim from input/images. It requires a lang attribute, a footer
+# marked igtool="footer" and the publish box (which it fills with the build
+# notice). Both go into a small bar overlaid on the map's corner, so the map
+# keeps its full-window layout.
+IG_FOOTER = """<style>
+#ig-footer {
+  position: fixed; left: 0.5rem; bottom: 0.5rem; max-width: 60vw;
+  font-size: 0.7rem; color: #78909c; background: rgb(255 255 255 / 0.85);
+}
+#ig-footer a { color: inherit; }
+</style>
+<div id="ig-footer" igtool="footer">
+<!--ReleaseHeader--><p id="publish-box">Publish Box goes here</p><!--EndReleaseHeader-->
+</div>
+"""
+
+
+def build_html(md_path, html_path, title, lang):
     """Render the Markdown into one self-contained HTML page with
     markmap-cli. --offline inlines markmap's JavaScript, so the published
     page loads nothing from a CDN."""
@@ -798,6 +816,8 @@ def build_html(md_path, html_path, title):
         page = fh.read()
     page = page.replace("<title>Markmap</title>",
                         f"<title>{html.escape(title)} - mind map</title>", 1)
+    page = page.replace("<html>", f'<html lang="{html.escape(lang)}">', 1)
+    page = page.replace("</body>", IG_FOOTER + "</body>", 1)
     with open(html_path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(page)
     print(f"wrote {html_path}", file=sys.stderr)
@@ -911,7 +931,7 @@ def main():
                   + ", ".join(sorted(opts.missing_sources)), file=sys.stderr)
 
         if opts.html:
-            build_html(out_path, opts.html, title)
+            build_html(out_path, opts.html, title, opts.lang)
     finally:
         if cleanup:
             shutil.rmtree(cleanup, ignore_errors=True)

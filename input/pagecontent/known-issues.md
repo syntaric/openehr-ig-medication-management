@@ -32,6 +32,7 @@ The QA report (`qa.html`) for this guide contains several thousand errors and wa
   - unresolved links to generic types such as `DV_INTERVAL<DV_QUANTITY>`;
   - warnings for URLs without a definition.
 - **Page template.** Every page raises one "html source is not well formed" warning. The same warnings appear with empty stub pages, so they come from the page layout and not from this guide's narrative.
+- **Mind map scripts.** The [mind map](template.html#mind-map) (`template-mindmap.html`) raises five errors that its inline `<script>` elements are "not allowed on the HL7 ci-build". They are markmap's own JavaScript, which draws the interactive map. The HL7 ci-build only allows scripts from the IG template. This guide is published on GitHub Pages, where the mind map works as intended.
 - **WebTemplate as an IG resource.** The IG lists `WebTemplate/cistec.openehr.medicationorder.v1` with a name, as the publisher requires, but the reference itself cannot be resolved by the validator, because WebTemplate is not a FHIR resource type.
 
 The CI build therefore reports the QA counts in the job summary but does not fail on them.
