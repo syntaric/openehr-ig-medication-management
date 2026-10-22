@@ -25,6 +25,8 @@ The FLAT JSON examples can be downloaded directly:
 - [example-oral-schema.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-oral-schema.json)
 - [example-iv-rate-therapy.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-iv-rate-therapy.json)
 - [example-conditional-prn.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-conditional-prn.json)
+- [example-consecutive-directions.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-consecutive-directions.json)
+- [example-overlapping-directions.json](https://github.com/syntaric/openehr-ig-medication-management/blob/main/input/includes/example-overlapping-directions.json)
 
 ### Implementation guide
 

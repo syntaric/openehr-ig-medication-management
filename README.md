@@ -67,7 +67,7 @@ The publisher version is set by `PUBLISHER_VERSION` in the workflow (`latest` by
    ```
 
 3. Archetypes that crash the publisher's importer go into `input/images/` instead of `input/archetypes/`. Currently these are ACTION archetypes, and archetypes whose English description has no keywords. Record any such archetype on `input/pagecontent/known-issues.md`.
-4. If node ids changed, update the FLAT examples in `input/includes/` and the walkthrough in `input/pagecontent/template.md`.
+4. If node ids changed, update the FLAT examples in `input/includes/` and the narrative that quotes paths: `template.md`, `implementation.md` and `lifecycle.md` in `input/pagecontent/`.
 5. Regenerate the mind map and commit the result:
 
    ```bash

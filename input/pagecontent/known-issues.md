@@ -1,4 +1,4 @@
-This guide exercises draft tooling on real content, so it has two kinds of known issues: limitations of the **IG Publisher's openEHR support**, and findings from a review of the **source template**. Tooling problems are documented here rather than suppressed or worked around in the content, so they can be reported to the FHIR-I openEHR initiative. The one exception is the ADL header edit described below.
+This guide exercises draft tooling on real content, so it has two kinds of known issues: limitations of the **IG Publisher's openEHR support**, and findings from a review of the **source template**. In addition, it lists **modelling decisions** that implementers should be aware of and **open questions** in the use of the template. Tooling problems are documented here rather than suppressed or worked around in the content, so they can be reported to the FHIR-I openEHR initiative. The one exception is the ADL header edit described below.
 
 The issues below were observed with IG Publisher 3.0.1 (October 2026), `openehr.base#0.1.0-snapshot` and `openehr.fhir.template#current`.
 
@@ -45,6 +45,12 @@ The CI build therefore reports the QA counts in the job summary but does not fai
 - **WebTemplate raw downloads.** The "Raw json/xml/ttl" links on the WebTemplate page are broken: the pages are generated in the language folder `en/`, but the files are written to the site root. Use the links on the [Downloads](downloads.html) page instead.
 - **`openehr` IG parameter.** The `openehr.fhir.template` adds an IG parameter `openehr=true`, which the publisher reports as unknown. openEHR loading is enabled by the `openehr.base` dependency, not by this parameter.
 
+### openEHR ADL 1.4
+
+#### Translations of archetypes used more than once
+
+`CLUSTER.medication.v2` is used several times in the template (medication details, stock solution, solvent, carrier solution, component, substance), and so is `CLUSTER.therapeutic_direction.v1` (once, periodically, schema, …). The template adapts the texts of their nodes to each context. In ADL 1.4, however, an operational template holds the terminology of an archetype only **once**, taken from the first occurrence in the template. The translated names, descriptions and comments of the later occurrences therefore show the text of the first occurrence, not the text adapted for their context. This is a limitation of ADL 1.4 operational templates and is not expected to be solved before CDRs support ADL 2. When in doubt, use the English texts on the [WebTemplate page](WebTemplate-cistec.openehr.medicationorder.v1.html), and the narrative of this guide.
+
 ### Source template review
 
 These findings concern `cistec.openehr.medication_order.v1` itself, as exported on 2026-08-12. They are listed for the template authors and have not been corrected in this guide.
@@ -57,4 +63,27 @@ These findings concern `cistec.openehr.medication_order.v1` itself, as exported 
 6. **Obsolete elements kept.** In `unit_conversion_reference`, the archetype comments for `unit_type` and `reference_id` say "OBSOLETE - only included in the data model for backwards compatibility", but the template does not remove them.
 7. **Non-UCUM units labelled as UCUM.** In the dose unit list, `mcg` and `mcmol` have the unit system `http://unitsofmeasure.org`, but they are not valid UCUM codes (UCUM uses `ug` and `umol`).
 8. **Typo.** The German label for `at0144` reads "Produkt mit meheren Inhaltsstoffen" (should be "mehreren").
-9. **Status changes need the whole order.** The INSTRUCTION and the Status ACTION are both 1..1 in one composition, so a status change cannot be recorded on its own (see [Examples](examples.html#status-changes)).
+9. **Status changes need the whole order.** The INSTRUCTION and the Status ACTION are both 1..1 in one composition, so a status change cannot be recorded on its own (see [Order Lifecycle](lifecycle.html)).
+10. **Copied descriptions of the identifiers.** In both the INSTRUCTION and the ACTION protocol, `order_sequence_id`, `derived_from_order_sequence_id`, `derives_to_order_sequence_id` and `order_group_id` all have the description of the order group ID ("Unique identifier for a medication order group …"). Their intended meaning is described on the [Implementation Guidance](implementation.html#identifiers) page.
+
+### Modelling decisions to be aware of
+
+These are not errors. They are deliberate choices, or workarounds for things the archetypes cannot express, that an implementer would not guess from the template alone. Each one is explained on the [Implementation Guidance](implementation.html) page.
+
+- **Redundant start and stop times.** The start of an order's validity period is stored in four places and the stop in three. All of them must be kept consistent.
+- **`ACTION.time` is the start of the validity period**, not the time at which the status was recorded. The time of recording is only in the commit audit.
+- **`EVENT_CONTEXT.end_time`** is used as the order stop, although it is not in the web template.
+- **Order of therapeutic directions.** CDRs have been seen to reject compositions whose therapeutic directions are not in template order.
+- **Feeder audit used for links and original values.** The link from a conditional criterion to a workflow-engine rule, the duration as entered (e.g. `P0.5D`) and the infusion rate as entered (e.g. in IE/h) are kept in the feeder audit of the element concerned. Generic openEHR tools will not show them as part of the order.
+- **Infusion rate limits as a reference range.** The minimum and maximum rate are stored in `DV_QUANTITY.other_reference_ranges` with the free-text meaning "Limits". A receiving system must know this convention to interpret them as limits.
+- **Comparison operator in `magnitude_status`.** In structured conditions, a threshold such as "> 180 mmHg" is a quantity whose `magnitude_status` holds the operator.
+
+### Open questions
+
+These points are not settled for the use of the template. The [Order Lifecycle](lifecycle.html) page shows the current working assumption.
+
+1. **Status changes: update or replace?** It is not decided whether pausing, reactivating and stopping an order updates the current composition in place or closes it and creates a new composition. The lifecycle scenario closes and replaces for "pause now" and "reactivate", and updates in place for "stop now".
+2. **Status at the end of an order.** When an order ends by reaching its stop time, or is stopped now by moving its stop time, the scenario does not change its status. Whether it should become *completed* (`532`) or *aborted* with careflow step *Medication order stopped* (`at0015`) is open.
+3. **Careflow step of a closed composition.** This guide uses *Major change to order* (`at0039`) for a composition that is closed because a newer one takes over. The template does not prescribe this.
+4. **Activation and reactivation** both use *Medication order issued* (`at0002`, `245` active) and cannot be told apart.
+

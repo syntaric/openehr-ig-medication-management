@@ -2,6 +2,8 @@ This page summarises the code systems and value lists that the template uses. Li
 
 ### EDQM Standard Terms
 
+Route and administration method use EDQM Standard Terms, which are also used for these elements in FHIR-based exchange formats such as the Swiss CH EMED. This makes mapping between the two straightforward.
+
 #### Route of administration
 
 `order/route` (1..1) is constrained to **83 EDQM route codes**. The template default is `20053000`. The labels are the German EDQM terms, as in the template (see [Known Issues](known-issues.html#source-template-review)).
@@ -71,6 +73,8 @@ This page summarises the code systems and value lists that the template uses. Li
 
 The mapping of careflow steps to ISM states is shown on the [template page](template.html#status).
 
+Changes to an order are also distinguished by the **audit change type** of the composition version, which the CDR records in `VERSION.commit_audit.change_type`: `249` creation for a new composition and `251` modification for a new version of an existing one (see [Order Lifecycle](lifecycle.html)).
+
 ### Local at-code value sets
 
 | Element | Codes | Archetype | ValueSet |
@@ -113,3 +117,21 @@ Products, articles and substances are identified through [CLUSTER.knowledge_base
 {:.grid}
 
 Text fields follow hospINDEX naming as well. `medication_item` and the medication `name` carry the product or article description (`DSCRD`), and substance names carry `NAMD`/`NAMED`/`CNAMED`.
+
+The `reference_substance` of a dose holds the substance name (`NAMD`). It may be sent as a coded text with the substance number (`SUBNO`) as the code, see [Dose that refers to a substance](implementation.html#dose-that-refers-to-a-substance).
+
+### Codes in data values outside the template constraints
+
+Some elements are free text or unconstrained in the template, but are filled with codes from a known system by convention:
+
+| Where | Code system | Usage |
+|---|---|---|
+| `…/dosage/reference_substance` (and in `rate`, `bolus`, schema positions, …) | hospINDEX `SUBNO` | Optional coding of the substance the dose refers to |
+| `order/body_site` | SNOMED CT (body structure) | Optional coding of the site of administration |
+| `…/_feeder_audit/original_content` of `administration_rate` | UCUM (`formalism` = `UCUM`) | Infusion rate as entered, e.g. `1000.[iU]/h` |
+| `…/_feeder_audit/original_content` of a duration | ISO 8601 (`formalism` = `ISO8601_duration`) | Duration as entered, e.g. `P0.5D` |
+| `…/_other_reference_ranges:n/meaning` of `administration_rate` | free text, `Limits` | Minimum and maximum infusion rate |
+| `condition/quantity_value` in structured conditions | UCUM units, e.g. `mm[Hg]`, `Cel`; `magnitude_status` as operator (`<`, `>`, `<=`, `>=`, `=`) | Thresholds of conditional rules |
+{:.grid}
+
+The use of these elements is described on the [Implementation Guidance](implementation.html) page.
