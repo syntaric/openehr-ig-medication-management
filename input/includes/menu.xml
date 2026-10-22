@@ -2,6 +2,8 @@
   <li><a href="index.html">Home</a></li>
   <li><a href="background.html">Background</a></li>
   <li><a href="template.html">Template</a></li>
+  <li><a href="implementation.html">Implementation</a></li>
+  <li><a href="lifecycle.html">Order Lifecycle</a></li>
   <li><a href="terminology.html">Terminology</a></li>
   <li><a href="examples.html">Examples</a></li>
   <li><a href="artifacts.html">Artifacts</a></li>

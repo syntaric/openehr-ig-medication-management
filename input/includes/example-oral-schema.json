@@ -8,6 +8,7 @@
   "medication_order/category|value": "event",
   "medication_order/category|terminology": "openehr",
   "medication_order/context/start_time": "2026-10-19T09:15:00+02:00",
+  "medication_order/context/_end_time": "2026-10-24T08:00:00+02:00",
   "medication_order/context/setting|code": "238",
   "medication_order/context/setting|value": "other care",
   "medication_order/context/setting|terminology": "openehr",
@@ -56,7 +57,7 @@
   "medication_order/medication_order/order/schema:0/evening/dose|magnitude": 1,
   "medication_order/medication_order/order/schema:0/evening/dose|unit": "Stk",
   "medication_order/medication_order/order/schema:0/evening/timing_evening/time_period_for_application/time_value": "18:00:00",
-  "medication_order/medication_order/order/schema:0/therapeutic_direction_start_date_time": "2026-10-19T18:00:00+02:00",
+  "medication_order/medication_order/order/schema:0/therapeutic_direction_start_date_time": "2026-10-19T09:15:00+02:00",
   "medication_order/medication_order/order/schema:0/therapeutic_direction_stop_date_time": "2026-10-24T08:00:00+02:00",
 
   "medication_order/medication_order/order/medication_safety/maximum_dose:0/maximum_amount|magnitude": 4000,
