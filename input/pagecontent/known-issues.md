@@ -32,7 +32,6 @@ The QA report (`qa.html`) for this guide contains several thousand errors and wa
   - unresolved links to generic types such as `DV_INTERVAL<DV_QUANTITY>`;
   - warnings for URLs without a definition.
 - **Page template.** Every page raises one "html source is not well formed" warning. The same warnings appear with empty stub pages, so they come from the page layout and not from this guide's narrative.
-- **Mind map scripts.** The [mind map](template.html#mind-map) (`template-mindmap.html`) raises five errors that its inline `<script>` elements are "not allowed on the HL7 ci-build". They are markmap's own JavaScript, which draws the interactive map. The HL7 ci-build only allows scripts from the IG template. This guide is published on GitHub Pages, where the mind map works as intended.
 - **WebTemplate as an IG resource.** The IG lists `WebTemplate/cistec.openehr.medicationorder.v1` with a name, as the publisher requires, but the reference itself cannot be resolved by the validator, because WebTemplate is not a FHIR resource type.
 
 The CI build therefore reports the QA counts in the job summary but does not fail on them.
@@ -43,6 +42,8 @@ The CI build therefore reports the QA counts in the job summary but does not fai
 - **No composition instances.** openEHR compositions cannot be loaded or validated as examples. The [Examples](examples.html) are narrative FLAT JSON, checked against the web template with an external script.
 - **Template id in page names.** The publisher drops the underscore from the template id in the page name (`WebTemplate-cistec.openehr.medicationorder.v1.html`). In archetype page names it replaces underscores with hyphens.
 - **WebTemplate raw downloads.** The "Raw json/xml/ttl" links on the WebTemplate page are broken: the pages are generated in the language folder `en/`, but the files are written to the site root. Use the links on the [Downloads](downloads.html) page instead.
+- **No custom tabs.** An IG cannot add a tab to a resource page. The [Mind map tab](WebTemplate-cistec.openehr.medicationorder.v1.mindmap.html) of the WebTemplate page is a separate page, and the tab is added by overriding the template's `fragment-base-navtabs.html` with a copy in `input/includes`. That copy has to be refreshed when the template's version changes.
+- **Inline scripts.** The publisher reports every inline `<script>` as "not allowed on the HL7 ci-build", but not a script loaded from the IG's own files. The mind map therefore loads its JavaScript (markmap's, which draws the map) from `template-mindmap.js`. Its tree view raises one "illegal html element: details" warning: the publisher's HTML check does not know the standard `<details>` element.
 - **`openehr` IG parameter.** The `openehr.fhir.template` adds an IG parameter `openehr=true`, which the publisher reports as unknown. openEHR loading is enabled by the `openehr.base` dependency, not by this parameter.
 
 ### Source template review

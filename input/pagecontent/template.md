@@ -2,9 +2,7 @@ This page walks through the operational template `cistec.openehr.medication_orde
 
 ### Mind map
 
-The mind map below shows the same tree for an overview. Slot fills are grouped under the slot they fill, hovering a node shows its description, and coded values are listed under a collapsed *Value set* node. Click a node to expand or collapse it, and drag or scroll to move and zoom. [Open the mind map full screen](template-mindmap.html).
-
-<iframe src="template-mindmap.html" title="Mind map of the template cistec.openehr.medication_order.v1" style="width: 100%; height: 600px; border: 1px solid #ccc;"></iframe>
+For an overview of the same tree, see the **[Mind map tab](WebTemplate-cistec.openehr.medicationorder.v1.mindmap.html)** of the WebTemplate page. It groups slot fills under the slot they fill, shows each node's description on hover, links coded elements to their value set on the [Terminology](terminology.html) page, and can switch to an indented tree view.
 
 ### Context
 

@@ -1,0 +1,104 @@
+{% comment %} Overrides the IG template's include of the same name: a copy
+  of openehr.fhir.template's version (November 2026, see template/includes/
+  after a build) plus a Mind map tab for WebTemplate pages, marked below.
+  When the template's version changes, copy it again and re-add the tab.
+{% endcomment %}{% assign excludexml = site.data.info.excludexml | downcase | slice: 0 %}
+{% assign excludejson = site.data.info.excludejson | downcase | slice: 0 %}
+{% assign excludettl = site.data.info.excludettl | downcase | slice: 0 %}
+{% assign openehr = site.data.info.openehr | downcase | slice: 0 %}
+{% assign excludelogbinaryformat = site.data.info.excludelogbinaryformat | downcase | slice: 0 %}
+{% assign togglechanges = site.data.info.togglechanges | downcase | slice: 0 %}
+{% assign resource_ = include.type| append: '/'| append: include.id  %}
+{% assign has_history = site.data.resources[resource_].['history'] %}
+{% if site.data.resources[resource_].sourceTail contains "#" %}
+{% assign contained_resource = 'y' %}
+{% endif %}
+{% if excludelogbinaryformat == 'y' and site.data.artifacts[localPage].type == 'Binary' %}
+{% assign profile_path = site.data.artifacts[localPage].exampleOf.url %}
+{% assign profile_structure = site.data.structuredefinitions | where: "path", profile_path | first %}
+{% if profile_structure.kind == 'logical' %}
+{% assign suppressformat = 'y' %}
+{% endif %}
+{% endif %}
+
+<ul class="nav nav-tabs">
+{% if include.active == 'content' %}
+  <li class="active">
+    <a href="#">{{site.data.stringsBase[include.lang]['NarrativeContent']}}</a>
+  </li>
+{% else %}
+  <li>
+    <a href="{{include.type}}-{{include.id}}.html">{{site.data.stringsBase[include.lang]['NarrativeContent']}}</a>
+  </li>
+{% endif %}
+{% if site.data.resources[resource_].['testplan'] or site.data.resources[resource_].['testscript'] %}
+  {% if include.active == 'testing' %}
+    <li class="active">
+      <a href="#">{{site.data.stringsBase[include.lang]['Testing']}}</a>
+    </li>
+  {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}-testing.html">{{site.data.stringsBase[include.lang]['Testing']}}</a>
+    </li>
+  {% endif %}
+{% endif %}
+{% unless excludexml == 'y' or contained_resource == 'y' or suppressformat == 'y' %}
+  {% if include.active == 'xml' %}
+    <li class="active">
+      <a href="#">{{site.data.stringsBase[include.lang]['XML']}}</a>
+    </li>
+  {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}.xml.html">{{site.data.stringsBase[include.lang]['XML']}}</a>
+    </li>
+  {% endif %}
+{% endunless %}
+{% unless excludejson == 'y' or contained_resource == 'y' or suppressformat == 'y' %}
+  {% if include.active == 'json' %}
+    <li class="active">
+      <a href="#">{{site.data.stringsBase[include.lang]['JSON']}}</a>
+    </li>
+  {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}.json.html">{{site.data.stringsBase[include.lang]['JSON']}}</a>
+    </li>
+  {% endif %}
+{% endunless %}
+{% unless excludettl == 'y' or contained_resource == 'y' or suppressformat == 'y' %}
+  {% if include.active == 'ttl' %}
+    <li class="active">
+      <a href="#">{{site.data.stringsBase[include.lang]['TTL']}}</a>
+    </li>
+  {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}.ttl.html">{{site.data.stringsBase[include.lang]['TTL']}}</a>
+    </li>
+  {% endif %}
+{% endunless %}
+{% comment %} Added for this IG: a Mind map tab on the WebTemplate pages
+  (page input/pagecontent/WebTemplate-<id>.mindmap.md, generated map in
+  input/images/template-mindmap.html). {% endcomment %}
+{% if include.type == 'WebTemplate' %}
+  {% if include.active == 'mindmap' %}
+    <li class="active">
+      <a href="#">Mind map</a>
+    </li>
+  {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}.mindmap.html">Mind map</a>
+    </li>
+  {% endif %}
+{% endif %}
+{% if site.data.resources[resource_].['history'] %}
+  {% if include.active == 'history' %}
+    <li class="active">
+      <a href="#">{{site.data.stringsBase[include.lang]['History']}}</a>
+    </li>
+    {% else %}
+    <li>
+      <a href="{{include.type}}-{{include.id}}.change.history.html">{{site.data.stringsBase[include.lang]['History']}}</a>
+    </li>
+  {% endif %}
+{% endif %}
+
+</ul>
