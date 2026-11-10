@@ -8,8 +8,10 @@ slot.
   python scripts/FilesetToMarkmap.py --html    # also build input/images/template-mindmap.html
 
 Each node shows its name, occurrences, data type or archetype id, and its
-description on hover. DV_CODED_TEXT value sets are listed under a folded
-"Value set" node (a single allowed code goes inline).
+description on hover. A DV_CODED_TEXT links to its value set's section on
+the IG's terminology page (a single allowed code goes inline). The HTML
+page also has an indented tree view of the same nodes (<page>#tree), and
+its JavaScript goes into <page>.js next to it.
 
 Why the source archetypes are needed: a template is flattened, and
 flattening deletes the ARCHETYPE_SLOT node once it's filled -- the filling
@@ -54,6 +56,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_INPUT = os.path.join(REPO_ROOT, "input")
 DEFAULT_OUTPUT_DIR = os.path.join(REPO_ROOT, "temp")
 DEFAULT_HTML = os.path.join(REPO_ROOT, "input", "images", "template-mindmap.html")
+DEFAULT_TERMINOLOGY = os.path.join(REPO_ROOT, "input", "pagecontent", "terminology.md")
 MARKMAP_CLI_VERSION = "0.18.12"
 
 XSI_TYPE = "{http://www.w3.org/2001/XMLSchema-instance}type"
@@ -197,52 +200,96 @@ def render_label(name, rm, arch, is_slot, occ, dt, opts, description="",
     else:
         parts.append(name)
 
+    # Occurrences, data types and archetype ids each go in a span with a
+    # class from DETAILS, so the HTML page can hide them (with their <br/>;
+    # the IG Publisher checks pages as XHTML, so every tag is closed).
     if occ:
-        parts.append(f"`{occ}`")
-    if rm == "ELEMENT" and opts.datatypes:
-        if dt:
-            parts.append(muted(dt) if opts.node_style == "badge"
-                         else f"<sub>{dt}</sub>")
+        parts.append(f'<span class="mm-occ">`{occ}`</span>')
+    if rm == "ELEMENT" and opts.datatypes and dt:
+        # A choice of more than two types (e.g. "Condition": seven) goes on
+        # its own lines, three types per line, so the node stays narrow.
+        types = [html.escape(t) for t in dt.split(" | ")]
+        rows = [types] if len(types) <= 2 else \
+            [types[i:i + 3] for i in range(0, len(types), 3)]
+        texts = []
+        for i, row in enumerate(rows):
+            text = " | ".join(row) + (" |" if i < len(rows) - 1 else "")
+            text = muted(text) if opts.node_style == "badge" else f"<sub>{text}</sub>"
+            texts.append(text if len(types) <= 2 else "<br/>" + text)
+        parts.append(f'<span class="mm-dt">{" ".join(texts)}</span>')
     if arch and opts.archetype_ids:
+        # Always on its own line: name + occurrences + id is often too long
+        # for one line, and an explicit break keeps the node box as wide as
+        # its longest line (see maxWidth in main()).
         sid = short_archetype_id(arch)
-        parts.append(muted(sid) if opts.node_style == "badge"
-                     else f"<sub>{sid}</sub>")
+        parts.append('<span class="mm-arch"><br/>'
+                     + (muted(sid) if opts.node_style == "badge"
+                        else f"<sub>{sid}</sub>") + "</span>")
     if is_slot and opts.node_style != "badge":
         parts.append("*(open slot)*")
     if value_set and len(value_set["codes"]) == 1:
         parts.append("= " + code_entry(value_set["codes"][0]))
+    elif value_set:
+        # On its own line, like the archetype id: a link to the list.
+        parts.append(f'<span class="mm-vs"><br/>{value_set_link(value_set, opts)}</span>')
     return with_tooltip(" ".join(parts), description)
 
 
 # -------------------------------------------------------------- value sets --
 # A DV_CODED_TEXT's allowed codes, as {"terminology", "codes": [(code,
-# label, description)], "default"}. One code goes inline in the node's own
-# label; more become a folded "Value set" child; none (an external
-# terminology with no list) becomes a single "<terminology> (external)" child.
+# label, description)], "default", "key"}; key is the node's id (Web
+# Template) or name (OPT). One code goes inline in the node's own label.
+# Longer lists (and external terminologies with no list) are not repeated
+# in the map: the node links to the section of the terminology page that
+# lists them, in a new tab.
 
 def code_entry(code_tuple):
     code, label, _desc = code_tuple
     return f"`{code}` {label}".rstrip()
 
 
-def value_set_lines(value_set, depth, opts):
-    if not value_set or len(value_set["codes"]) == 1:
+def heading_slug(text):
+    """The id kramdown gives a heading ("SNOMED CT" -> "snomed-ct")."""
+    text = re.sub(r"[^a-z0-9\s-]", "", text.lower())
+    return re.sub(r"\s+", "-", text.strip())
+
+
+def load_headings(md_path):
+    """Heading ids of the terminology page, in page order."""
+    if not md_path or not os.path.isfile(md_path):
         return []
-    indent = "  " * depth
+    with open(md_path, encoding="utf-8") as fh:
+        return [heading_slug(m.group(1))
+                for m in re.finditer(r"^#+\s+(.+?)\s*$", fh.read(), re.M)]
+
+
+def value_set_anchor(value_set, headings):
+    """The section for a value set: a heading containing the node's id
+    ("route" -> route-of-administration), else the first heading starting
+    with the terminology's name (EDQM, local, openEHR, SNOMED CT)."""
+    key = f"-{heading_slug(value_set['key'].replace('_', ' '))}-"
+    terminology = heading_slug(value_set["terminology"].replace("-", " "))
+    for slug in headings:
+        if key != "--" and key in f"-{slug}-":
+            return slug
+    for slug in headings:
+        if slug.split("-")[0] == terminology.split("-")[0]:
+            return slug
+    return ""
+
+
+def value_set_link(value_set, opts):
     codes = value_set["codes"]
-    if not codes:
-        return [f"{indent}- {muted(value_set['terminology'] + ' (external)')}"]
-    header = f"Value set · {value_set['terminology']} · {len(codes)} codes"
-    lines = [f"{indent}- {muted(header, '0.9em')} <!-- markmap: fold -->"]
-    shown = codes[:opts.max_codes] if opts.max_codes else codes
-    for code_tuple in shown:
-        entry = code_entry(code_tuple)
-        if code_tuple[0] == value_set.get("default"):
-            entry = f"**{entry}** *(default)*"
-        lines.append(f"{indent}  - {with_tooltip(entry, code_tuple[2])}")
-    if len(codes) > len(shown):
-        lines.append(f"{indent}  - {muted(f'… {len(codes) - len(shown)} more')}")
-    return lines
+    text = f"Value set · {html.escape(value_set['terminology'])} · " \
+        + (f"{len(codes)} codes" if codes else "external")
+    if not opts.terminology_page:
+        return muted(text)
+    href = opts.terminology_page
+    anchor = value_set_anchor(value_set, opts.terminology_headings)
+    if anchor:
+        href += "#" + anchor
+    return (f'<a href="{href}" target="_blank" rel="noopener" '
+            f'style="color:{COLOUR};font-size:0.8em">{text} ↗</a>')
 
 
 def opt_value_set(obj, terms):
@@ -265,8 +312,9 @@ def opt_value_set(obj, terms):
             assumed = next((c for c in cp if local(c) == "assumed_value"), None)
             default = child_text(assumed, "code_string") if assumed is not None else None
             if codes or terminology:
+                name = terms.get(child_text(obj, "node_id"), {}).get("text", "")
                 return {"terminology": terminology or "local", "codes": codes,
-                        "default": default}
+                        "default": default, "key": name}
     return None
 
 
@@ -286,7 +334,8 @@ def wt_value_set(node, opts):
                           descs.get(opts.lang) or descs.get("en") or ""))
         if codes or inp.get("terminology"):
             return {"terminology": inp.get("terminology") or "local",
-                    "codes": codes, "default": inp.get("defaultValue")}
+                    "codes": codes, "default": inp.get("defaultValue"),
+                    "key": node.get("id", "")}
     return None
 
 
@@ -621,7 +670,6 @@ def walk(obj, terms, depth, out, opts, current_arch):
         out.append(f"{'  ' * depth}- {label_for(obj, terms, opts, value_set)}")
         depth += 1
         opts.emitted += 1
-        out += value_set_lines(value_set, depth, opts)
 
     for attr in kids(obj, "attributes"):
         attr_name = child_text(attr, "rm_attribute_name")
@@ -732,7 +780,6 @@ def wt_walk(node, depth, out, opts, current_arch):
     out.append(f"{'  ' * depth}- {wt_label(node, opts, value_set)}")
     depth += 1
     opts.emitted += 1
-    out += value_set_lines(value_set, depth, opts)
     if node["rmType"] == "ELEMENT" and not opts.containers:
         return
 
@@ -796,10 +843,200 @@ IG_FOOTER = """<style>
 """
 
 
-def build_html(md_path, html_path, title, lang):
-    """Render the Markdown into one self-contained HTML page with
-    markmap-cli. --offline inlines markmap's JavaScript, so the published
-    page loads nothing from a CDN."""
+# ------------------------------------------------------------- tree view --
+# markmap only lays out left to right. The HTML page therefore also gets an
+# indented, collapsible tree of the same nodes (<details> elements, built
+# here from the Markdown), shown over the map at <page>#tree. The switch is
+# plain CSS (:target).
+
+ITEM_RE = re.compile(r"( *)- (.*)")
+INLINE_CODE_RE = re.compile(r"`([^`]+)`")
+STRONG_RE = re.compile(r"\*\*(.+?)\*\*")
+EM_RE = re.compile(r"\*([^*\s][^*]*?)\*")
+
+
+def inline_markdown(label):
+    """The inline Markdown the labels use (`code`, **bold**, *italic*) as
+    HTML. HTML tags (and so the title tooltips) are left alone."""
+    out = []
+    for part in re.split(r"(<[^>]*>)", label):
+        if not part.startswith("<"):
+            codes = []
+            part = INLINE_CODE_RE.sub(
+                lambda m: codes.append(m.group(1)) or f"\0{len(codes) - 1}\0", part)
+            part = STRONG_RE.sub(r"<strong>\1</strong>", part)
+            part = EM_RE.sub(r"<em>\1</em>", part)
+            part = re.sub("\0(\\d+)\0",
+                          lambda m: f"<code>{codes[int(m.group(1))]}</code>", part)
+        out.append(part)
+    return "".join(out)
+
+
+def parse_outline(markdown):
+    """[label, children] tree from the Markdown this script writes: a "# "
+    root, then "- " items indented two spaces per level."""
+    root, stack = None, []
+    for line in markdown.split("\n"):
+        if line.startswith("# "):
+            root = [line[2:], []]
+            stack = [root]
+            continue
+        m = ITEM_RE.fullmatch(line)
+        if not m or root is None:  # also skips the frontmatter
+            continue
+        node = [m.group(2), []]
+        del stack[len(m.group(1)) // 2 + 1:]
+        stack[-1][1].append(node)
+        stack.append(node)
+    return root
+
+
+def tree_items(node, depth, expand, out):
+    """Nested <li>s; open like the map (markmap folds from depth `expand`,
+    counting the root as 1)."""
+    label, children = node
+    label = inline_markdown(label)
+    if not children:
+        out.append(f'<li class="leaf"><span>{label}</span></li>')
+        return
+    is_open = ' open="open"' if depth + 1 < expand else ""
+    out.append(f"<li><details{is_open}><summary>{label}</summary><ul>")
+    for child in children:
+        tree_items(child, depth + 1, expand, out)
+    out.append("</ul></details></li>")
+
+
+# Tree lines: each nested item draws its own piece of its parent's vertical
+# line (::after, stopping at the last item) and a tick towards its label
+# (::before, longer for leaves, which have no disclosure marker). Labels go
+# on one line: the <br>s before archetype ids and value-set links only
+# keep the map's nodes narrow.
+TREE_VIEW_CSS = """<style>
+#tree {
+  position: fixed; inset: 0; overflow: auto; padding: 3rem 1rem 3rem 1.5rem;
+  background: white; line-height: 1.5; font-size: 0.95rem;
+}
+#tree:not(:target) { display: none; }
+.markmap-dark #tree { background: #27272a; }
+#tree ul { list-style: none; }
+#tree ul ul { margin-left: 0.35rem; padding-left: 1rem; }
+#tree li { position: relative; }
+#tree ul ul > li::before, #tree ul ul > li::after {
+  content: ""; position: absolute; left: -1rem; border: 0 solid %(line)s; }
+#tree ul ul > li::before { top: 0.75em; width: 0.75rem; border-top-width: 1px; }
+#tree ul ul > li.leaf::before { width: 1.6rem; }
+#tree ul ul > li::after { top: 0; bottom: 0; border-left-width: 1px; }
+#tree ul ul > li:last-child::after { bottom: auto; height: 0.75em; }
+#tree summary { cursor: pointer; }
+#tree summary::marker { color: %(colour)s; }
+#tree .leaf > span { display: block; padding-left: 1rem; }
+#tree br { display: none; }
+#tree .mm-arch, #tree .mm-vs { margin-left: 0.4em; }
+#tree code { background: #f0f0f0; color: #555; padding: 0 0.2em;
+  border-radius: 3px; font-size: 0.85em; }
+.markmap-dark #tree code { background: #1a1b26; color: #ddd; }
+#tree:target ~ .mm-toolbar { display: none; }
+#controls {
+  position: fixed; top: 0.75rem; right: 0.75rem; display: flex;
+  flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem;
+  font-size: 0.8rem; line-height: 1.6;
+}
+#controls > * {
+  display: flex; border: 1px solid #d4d4d8; border-radius: 0.25rem;
+  background: white; overflow: hidden;
+}
+#controls > [hidden] { display: none; }
+.markmap-dark #controls > * { background: #27272a; border-color: #52525b; }
+#controls label { padding: 0 0.5rem; cursor: pointer; color: #555; }
+.markmap-dark #controls label { color: #ddd; }
+#controls input { margin-right: 0.3rem; vertical-align: -0.1rem;
+  accent-color: %(colour)s; }
+#view-switch a, #fullscreen { padding: 0 0.6rem; color: %(colour)s;
+  text-decoration: none; }
+#fullscreen { font: inherit; cursor: pointer; }
+#view-switch a.to-map, #tree:target ~ #controls a.to-tree {
+  background: %(colour)s; color: white; }
+#tree:target ~ #controls a.to-map { background: none; color: %(colour)s; }
+</style>
+""" % {"colour": COLOUR, "line": "rgb(2 119 189 / 0.35)"}
+
+# Label parts the page can hide: (id, class in render_label, checkbox text).
+# Each checkbox hides its class with :has(); markmap watches its nodes' sizes
+# and lays the map out again, so this needs no script.
+DETAILS = [("occ", "mm-occ", "Occurrences"),
+           ("dt", "mm-dt", "Data types"),
+           ("arch", "mm-arch", "Archetype ids"),
+           ("vs", "mm-vs", "Value sets")]
+
+
+def tree_view(markdown, expand):
+    """The tree element and the controls (view switch, detail checkboxes
+    and full-screen button), to go first in <body>: the CSS above selects
+    the map's controls as later siblings of #tree."""
+    out = ['<div id="tree"><ul>']
+    tree_items(parse_outline(markdown), 0, expand, out)
+    out.append("</ul></div>")
+    details = [d for d in DETAILS if f'class="{d[1]}"' in markdown]
+    out.append("<style>" + "".join(
+        f"body:has(#show-{key}:not(:checked)) .{cls} {{ display: none; }}"
+        for key, cls, _ in details) + "</style>")
+    # The "Mind map" link targets #map, an empty span: the publisher's link
+    # check doesn't count the SVG's id as a target.
+    out.append('<span id="map"></span>')
+    out.append('<div id="controls">')
+    if details:
+        out.append('<div id="details">' + "".join(
+            f'<label><input type="checkbox" id="show-{key}" checked="checked"/>'
+            f'{text}</label>' for key, _, text in details) + "</div>")
+    out.append('<nav id="view-switch"><a class="to-map" href="#map">Mind map</a>'
+               '<a class="to-tree" href="#tree">Tree</a></nav>')
+    # Shown by PAGE_SCRIPT where the browser allows full screen.
+    out.append('<button id="fullscreen" type="button" hidden="hidden">'
+               'Full screen</button>')
+    out.append("</div>")
+    return "\n".join(out) + "\n"
+
+
+# ------------------------------------------------------------------ script --
+# The IG Publisher reports every inline <script> as "not allowed on the HL7
+# ci-build", but not a script loaded from a relative src. So all of the
+# page's JavaScript (markmap's, inlined by --offline, and PAGE_SCRIPT) goes
+# into a .js file next to the page.
+
+SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.S)
+# markmap-cli switches to its dark theme when the OS is in dark mode; the
+# page always starts light (the toolbar can still switch).
+DARK_MODE_INIT_RE = re.compile(
+    r'if \(window\.matchMedia\("\(prefers-color-scheme: dark\)"\)\.matches\) \{'
+    r'\s*document\.documentElement\.classList\.add\("markmap-dark"\);\s*\}')
+
+PAGE_SCRIPT = """(() => {
+  // markmap's toolbar links its logo to markmap.js.org: open that in a new
+  // tab instead of in place of the map (or inside the IG's iframe).
+  setTimeout(() => document.querySelectorAll("a.mm-toolbar-brand").forEach((a) => {
+    a.target = "_blank";
+    a.rel = "noopener";
+  }));
+  // Full screen where the browser allows it; in an iframe, only with
+  // allow="fullscreen". The map is fitted to the new size.
+  const button = document.getElementById("fullscreen");
+  if (!button || !document.fullscreenEnabled) return;
+  button.hidden = false;
+  button.addEventListener("click", () => document.fullscreenElement
+    ? document.exitFullscreen()
+    : document.documentElement.requestFullscreen());
+  document.addEventListener("fullscreenchange", () => {
+    button.textContent = document.fullscreenElement ? "Exit full screen" : "Full screen";
+    setTimeout(() => window.mm && window.mm.fit(), 100);
+  });
+})();
+"""
+
+
+def build_html(md_path, html_path, title, lang, expand):
+    """Render the Markdown into an HTML page with markmap-cli, plus the
+    tree view, and move its JavaScript into <page>.js. --offline inlines
+    markmap's JavaScript, so the page loads nothing from a CDN."""
     npx = shutil.which("npx")
     if not npx:
         sys.exit("--html needs Node.js (npx) on PATH; the Markdown was "
@@ -817,10 +1054,31 @@ def build_html(md_path, html_path, title, lang):
     page = page.replace("<title>Markmap</title>",
                         f"<title>{html.escape(title)} - mind map</title>", 1)
     page = page.replace("<html>", f'<html lang="{html.escape(lang)}">', 1)
-    page = page.replace("</body>", IG_FOOTER + "</body>", 1)
+
+    script = "\n;\n".join(SCRIPT_RE.findall(page) + [PAGE_SCRIPT])
+    script, found = DARK_MODE_INIT_RE.subn("", script)
+    if not found:
+        print("warning: markmap's dark-mode switch not found; the page may "
+              "start dark", file=sys.stderr)
+    js_path = os.path.splitext(html_path)[0] + ".js"
+    page = SCRIPT_RE.sub("", page)
+    if "<script" in page:
+        print("warning: the page still has a <script> element", file=sys.stderr)
+
+    with open(md_path, encoding="utf-8") as fh:
+        markdown = fh.read()
+    # The tree goes on top of the map rather than replacing it: markmap
+    # measures its nodes on load, which fails while the SVG is hidden.
+    page = page.replace("</head>", TREE_VIEW_CSS + "</head>", 1)
+    page = page.replace("<body>", "<body>\n" + tree_view(markdown, expand), 1)
+    page = page.replace(
+        "</body>", f'<script src="{os.path.basename(js_path)}"></script>\n'
+        + IG_FOOTER + "</body>", 1)
     with open(html_path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(page)
-    print(f"wrote {html_path}", file=sys.stderr)
+    with open(js_path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(script)
+    print(f"wrote {html_path} and {js_path}", file=sys.stderr)
 
 
 def main():
@@ -855,11 +1113,12 @@ def main():
                     default="badge")
     ap.add_argument("--no-value-sets", dest="value_sets", action="store_false",
                     default=True,
-                    help="don't list DV_CODED_TEXT codes (a single code goes "
-                         "inline, longer lists under a folded \"Value set\" node)")
-    ap.add_argument("--max-codes", type=int, metavar="N", default=0,
-                    help="show at most N codes per value set, then \"... more\" "
-                         "(default 0: no cap)")
+                    help="don't show DV_CODED_TEXT codes (a single code goes "
+                         "inline, longer lists as a link to the terminology page)")
+    ap.add_argument("--terminology-page", metavar="MD", default=DEFAULT_TERMINOLOGY,
+                    help="Markdown page that lists the value sets; nodes link "
+                         "to its sections, as <name>.html#<heading> (default: "
+                         "input/pagecontent/terminology.md; \"\" for no links)")
     ap.add_argument("--in-context", action="store_true",
                     help="Web Template input: keep RM-level nodes marked "
                          "inContext (language, composer, ism_transition, ...)")
@@ -874,7 +1133,7 @@ def main():
                          "-- they're near-universal boilerplate that rarely "
                          "adds information")
     ap.add_argument("--html", nargs="?", metavar="PATH", const=DEFAULT_HTML,
-                    help="also build a self-contained interactive HTML page "
+                    help="also build an interactive HTML page (and its .js) "
                          "with markmap-cli (needs Node/npx; default PATH: "
                          "input/images/template-mindmap.html, which the IG "
                          "publishes)")
@@ -882,6 +1141,13 @@ def main():
 
     opts.emitted = opts.pruned = opts.grouped = opts.omitted_slots = 0
     opts.missing_sources = set()
+    opts.terminology_headings = load_headings(opts.terminology_page)
+    if opts.terminology_page and not os.path.isfile(opts.terminology_page):
+        print(f"no {opts.terminology_page}: value sets are not linked", file=sys.stderr)
+        opts.terminology_page = ""
+    elif opts.terminology_page:
+        opts.terminology_page = \
+            os.path.splitext(os.path.basename(opts.terminology_page))[0] + ".html"
 
     opt_path, archetypes_dir, cleanup = resolve_inputs(opts.fileset, opts.archetypes)
     try:
@@ -899,7 +1165,12 @@ def main():
             title, body = render_opt(opt_path, opts)
 
         head = ["---", "markmap:", f"  initialExpandLevel: {opts.expand}",
-                "  maxWidth: 380", "  color:", f"    - \"{COLOUR}\"",
+                # No maxWidth: markmap wraps over-long nodes, but a wrapped
+                # node's box (and underline) then stays at the full maxWidth.
+                # Line breaks are explicit instead (before archetype ids).
+                "  color:", f"    - \"{COLOUR}\"",
+                # Open/close animation, in ms (markmap's default: 500).
+                "  duration: 250",
                 "---", ""]
         # The template's root node (e.g. the COMPOSITION) is the map's
         # centre -- promote it to the heading rather than nesting it under
@@ -931,7 +1202,7 @@ def main():
                   + ", ".join(sorted(opts.missing_sources)), file=sys.stderr)
 
         if opts.html:
-            build_html(out_path, opts.html, title, opts.lang)
+            build_html(out_path, opts.html, title, opts.lang, opts.expand)
     finally:
         if cleanup:
             shutil.rmtree(cleanup, ignore_errors=True)

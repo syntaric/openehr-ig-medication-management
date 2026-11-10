@@ -21,7 +21,7 @@ The content is the CISTEC inpatient medication order template `cistec.openehr.me
 ig.ini                           IG Publisher entry point
 _updatePublisher.sh              download publisher.jar into input-cache/
 _genonce.sh                      build the IG once
-scripts/FilesetToMarkmap.py      generate the template mind map (input/images/template-mindmap.html)
+scripts/FilesetToMarkmap.py      generate the template mind map (input/images/template-mindmap.html + .js)
 input/
   openehr-medication-management.xml   ImplementationGuide resource
   archetypes/*.adl               ADL 1.4 archetypes, loaded as logical models
@@ -30,8 +30,11 @@ input/
                                  the publisher cannot load yet (downloads only) and
                                  the generated mind map
   includes/menu.xml              site menu
+  includes/fragment-base-navtabs.html
+                                 copy of the IG template's resource tabs, plus a
+                                 Mind map tab on the WebTemplate page
   includes/example-*.json        FLAT composition examples, shown on the Examples page
-  pagecontent/*.md               narrative pages
+  pagecontent/*.md               narrative pages, and the WebTemplate's Mind map tab
   ignoreWarnings.txt             intentionally empty (no suppressed QA messages)
 ```
 
@@ -74,7 +77,7 @@ The publisher version is set by `PUBLISHER_VERSION` in the workflow (`latest` by
    python scripts/FilesetToMarkmap.py --html
    ```
 
-   This reads the web template and all ADL files under `input/`, and writes `input/images/template-mindmap.html` (and the intermediate Markdown into `temp/`). It needs Python 3.9+ (standard library only) and Node.js: `npx` fetches `markmap-cli` on first use. Without `--html` it writes only the Markdown, e.g. for the markmap VS Code extension. See `python scripts/FilesetToMarkmap.py --help` for the options.
+   This reads the web template and all ADL files under `input/`, and writes `input/images/template-mindmap.html` with its script `template-mindmap.js` (and the intermediate Markdown into `temp/`). The IG shows the page on the Mind map tab of the WebTemplate page. It has two views of the same nodes: the mind map, and an indented tree (`template-mindmap.html#tree`), switched with the buttons at the top right. Checkboxes there show or hide occurrences, data types, archetype ids and value-set links in both views. Coded elements link to their value set's section on `input/pagecontent/terminology.md`: a heading containing the node's id (e.g. *Route of administration* for `route`), else the first heading starting with the terminology's name (*EDQM*, *Local*, *openEHR*, *SNOMED CT*). It needs Python 3.9+ (standard library only) and Node.js: `npx` fetches `markmap-cli` on first use. Without `--html` it writes only the Markdown, e.g. for the markmap VS Code extension. See `python scripts/FilesetToMarkmap.py --help` for the options.
 
 ## Licence
 

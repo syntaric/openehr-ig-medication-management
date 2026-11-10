@@ -94,6 +94,12 @@
         <title value="Downloads"/>
         <generation value="markdown"/>
       </page>
+      <!-- the Mind map tab of the WebTemplate page (see input/includes/fragment-base-navtabs.html) -->
+      <page>
+        <name value="WebTemplate-cistec.openehr.medicationorder.v1.mindmap.html"/>
+        <title value="WebTemplate: Medication order (cistec.openehr.medication_order.v1) - Mind map"/>
+        <generation value="markdown"/>
+      </page>
     </page>
     <!-- copyright year is a mandatory parameter -->
     <parameter>
