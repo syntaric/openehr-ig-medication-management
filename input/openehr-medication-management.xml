@@ -65,6 +65,16 @@
         <generation value="markdown"/>
       </page>
       <page>
+        <name value="implementation.html"/>
+        <title value="Implementation Guidance"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
+        <name value="lifecycle.html"/>
+        <title value="Order Lifecycle"/>
+        <generation value="markdown"/>
+      </page>
+      <page>
         <name value="terminology.html"/>
         <title value="Terminology"/>
         <generation value="markdown"/>

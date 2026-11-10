@@ -17,6 +17,18 @@ The template records two things in a single `COMPOSITION.request`:
 
 The guide does not cover dispensing, administration recording or medication lists.
 
+### How this guide is organised
+
+| Page | Content |
+|---|---|
+| [Medication Order Template](template.html) | Walkthrough of the template: what is ordered, how and when it is given, the order status |
+| [Implementation Guidance](implementation.html) | Rules that are not visible in the template: redundant start/stop times, order of therapeutic directions, identifiers, dose reference substance, conditional criteria, values that the RM cannot store as entered |
+| [Order Lifecycle](lifecycle.html) | How changes to a running order are recorded (update in place or close and replace), with a worked eight-step scenario |
+| [Terminology](terminology.html) | EDQM, openEHR, SNOMED CT, units, hospINDEX |
+| [Examples](examples.html) | Five complete FLAT compositions |
+| [Known Issues](known-issues.html) | Tooling limitations, source template findings, modelling decisions and open questions |
+{:.grid}
+
 ### Composition structure
 
 ```
@@ -52,7 +64,7 @@ COMPOSITION  openEHR-EHR-COMPOSITION.request.v1                 "Medication orde
 | Operational template as a WebTemplate | [cistec.openehr.medication_order.v1](WebTemplate-cistec.openehr.medicationorder.v1.html) |
 | Archetypes as logical models | [Artifacts](artifacts.html) (12 of 15, see [Known Issues](known-issues.html#archetypes-not-rendered)) |
 | Value sets for archetype at-codes | [Artifacts](artifacts.html) |
-| Example compositions (FLAT format) | [Examples](examples.html) |
+| Example compositions (FLAT format) | [Examples](examples.html) (5) |
 | OPT 1.4 XML, web template JSON, ADL files | [Downloads](downloads.html) |
 {:.grid}
 
