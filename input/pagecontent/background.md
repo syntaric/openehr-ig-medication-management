@@ -26,7 +26,7 @@ The publisher loads every `.adl` file in a resource folder (`input/archetypes`) 
 
 #### Templates become WebTemplate pages
 
-The publisher does **not** read Operational Template (OPT 1.4 XML) files. Instead it loads the **WebTemplate JSON** that Archetype Designer exports. It recognises the file by its `templateId`, `version`, `defaultLanguage` and `tree` properties, and renders it as `WebTemplate-<id>.html`. The WebTemplate is the flattened, template-constrained tree that FLAT and STRUCTURED composition formats are based on, so it is also what the [Examples](examples.html) use.
+The publisher does **not** read Operational Template (OPT 1.4 XML) files. Instead it loads the **WebTemplate JSON** that Archetype Designer exports. Because `openehr.base` defines WebTemplate as a logical model that can be loaded as a resource, the publisher recognises any JSON file without a `resourceType` that has all of the model's required properties (`templateId`, `version`, `defaultLanguage`, `tree`), and renders it with its standard naming as `WebTemplate-<id>.html`. Here the id is `cistec.openehr.medicationorder.v1`; FHIR ids cannot contain underscores. The WebTemplate is the flattened, template-constrained tree that FLAT and STRUCTURED composition formats are based on, so it is also what the [Examples](examples.html) use.
 
 The OPT is still distributed as a [download](downloads.html), because it is what openEHR Clinical Data Repositories (CDRs) need to upload a template.
 
