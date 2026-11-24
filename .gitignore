@@ -17,3 +17,6 @@ nimbalyst-local/
 
 # OS
 .DS_Store
+
+# Patched IG Publisher jar (local build tool, ~244 MB)
+input/publisher-patched.jar
