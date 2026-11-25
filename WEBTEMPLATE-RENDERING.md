@@ -87,3 +87,4 @@ The pull requests hapifhir/org.hl7.fhir.core#2882 and openehr-fhir/base-spec#7 a
 | `7c3ddda` | Labelled defaults and continuous tree lines |
 | `f0247e3` | AQL path as a hover pop-up |
 | `bc30291` | Colour node icons by kind |
+| `03e368c` | Link input lists to their ValueSets |
