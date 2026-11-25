@@ -1,0 +1,48 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-ACTION.medication.v1.current-state",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-ACTION.medication.v1.current-state",
+  "name": "CurrentStateStatusInputList",
+  "title": "Current_state (Status)",
+  "status": "draft",
+  "experimental": false,
+  "description": "openEHR codes allowed for Current_state (/content[openEHR-EHR-ACTION.medication.v1,'Status']/ism_transition/current_state) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "https://specifications.openehr.org/fhir/codesystem-instruction_states",
+        "concept": [
+          {
+            "code": "530",
+            "display": "suspended"
+          },
+          {
+            "code": "245",
+            "display": "active"
+          },
+          {
+            "code": "531",
+            "display": "aborted"
+          },
+          {
+            "code": "532",
+            "display": "completed"
+          },
+          {
+            "code": "528",
+            "display": "cancelled"
+          }
+        ]
+      }
+    ]
+  }
+}

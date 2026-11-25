@@ -1,0 +1,40 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-CLUSTER.medication.v2.at0142.template-2",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-CLUSTER.medication.v2.at0142.template-2",
+  "name": "CategoryMedicationComponentInputList",
+  "title": "Category (Medication component)",
+  "status": "draft",
+  "experimental": false,
+  "description": "Codes allowed for Category (/content[openEHR-EHR-INSTRUCTION.medication_order.v3]/activities[at0001]/description[at0002]/items[openEHR-EHR-CLUSTER.medication.v2]/items[openEHR-EHR-CLUSTER.medication.v2,'Stock solution']/items[openEHR-EHR-CLUSTER.medication.v2,'Medication component']/items[at0142]/value) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://hl7.org/fhir/uv/openehr-medication-management/CodeSystem/openEHR-EHR-CLUSTER.medication.v2.at0142",
+        "concept": [
+          {
+            "code": "at0146",
+            "display": "Ingredient"
+          },
+          {
+            "code": "at0144",
+            "display": "Multi-ingredient product"
+          },
+          {
+            "code": "at0145",
+            "display": "Single-ingredient product"
+          }
+        ]
+      }
+    ]
+  }
+}

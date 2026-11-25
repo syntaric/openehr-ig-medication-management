@@ -1,0 +1,32 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-COMPOSITION.request.v1.category",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-COMPOSITION.request.v1.category",
+  "name": "CategoryMedicationOrderInputList",
+  "title": "category (Medication order)",
+  "status": "draft",
+  "experimental": false,
+  "description": "openEHR codes allowed for category (/category) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "https://specifications.openehr.org/fhir/codesystem-composition_category",
+        "concept": [
+          {
+            "code": "433",
+            "display": "event"
+          }
+        ]
+      }
+    ]
+  }
+}

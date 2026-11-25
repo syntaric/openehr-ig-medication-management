@@ -1,0 +1,46 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-CLUSTER.dosage.v2.quantity-value.units-2",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-CLUSTER.dosage.v2.quantity-value.units-2",
+  "name": "QuantityValueUnitsRateInputList",
+  "title": "quantity_value units (Rate)",
+  "status": "draft",
+  "experimental": false,
+  "description": "Units allowed for quantity_value (/content[openEHR-EHR-INSTRUCTION.medication_order.v3]/activities[at0001]/description[at0002]/items[openEHR-EHR-CLUSTER.therapeutic_direction.v1,'Rate therapy']/items[openEHR-EHR-CLUSTER.dosage.v2,'Rate']/items[at0134]/value) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://unitsofmeasure.org",
+        "concept": [
+          {
+            "code": "l/d"
+          },
+          {
+            "code": "l/h"
+          },
+          {
+            "code": "ml/h"
+          },
+          {
+            "code": "ml/min"
+          },
+          {
+            "code": "ml/s"
+          },
+          {
+            "code": "ml/d"
+          }
+        ]
+      }
+    ]
+  }
+}

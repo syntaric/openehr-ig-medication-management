@@ -1,0 +1,148 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-CLUSTER.dosage.v2.quantity-value.units",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-CLUSTER.dosage.v2.quantity-value.units",
+  "name": "QuantityValueUnitsDosageInputList",
+  "title": "quantity_value units (Dosage)",
+  "status": "draft",
+  "experimental": false,
+  "description": "Units allowed for quantity_value (/content[openEHR-EHR-INSTRUCTION.medication_order.v3]/activities[at0001]/description[at0002]/items[openEHR-EHR-CLUSTER.therapeutic_direction.v1,'Conditional']/items[openEHR-EHR-CLUSTER.dosage.v2]/items[at0144]/value) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://unitsofmeasure.org",
+        "concept": [
+          {
+            "code": "Anw"
+          },
+          {
+            "code": "Blist"
+          },
+          {
+            "code": "Btl"
+          },
+          {
+            "code": "Dos"
+          },
+          {
+            "code": "Dosierpip"
+          },
+          {
+            "code": "Dosierspr"
+          },
+          {
+            "code": "EL"
+          },
+          {
+            "code": "Fl"
+          },
+          {
+            "code": "Tropf"
+          },
+          {
+            "code": "Hub"
+          },
+          {
+            "code": "MB"
+          },
+          {
+            "code": "ML"
+          },
+          {
+            "code": "Pck"
+          },
+          {
+            "code": "Pfl"
+          },
+          {
+            "code": "Stk"
+          },
+          {
+            "code": "Tube"
+          },
+          {
+            "code": "Teilpck"
+          },
+          {
+            "code": "TL"
+          },
+          {
+            "code": "N/A"
+          },
+          {
+            "code": "E"
+          },
+          {
+            "code": "Mio E"
+          },
+          {
+            "code": "IE"
+          },
+          {
+            "code": "Mio IE"
+          },
+          {
+            "code": "ng"
+          },
+          {
+            "code": "mcg"
+          },
+          {
+            "code": "mg"
+          },
+          {
+            "code": "g"
+          },
+          {
+            "code": "ml"
+          },
+          {
+            "code": "nmol"
+          },
+          {
+            "code": "mcmol"
+          },
+          {
+            "code": "mmol"
+          },
+          {
+            "code": "ppm"
+          },
+          {
+            "code": "J"
+          },
+          {
+            "code": "kJ"
+          },
+          {
+            "code": "cal"
+          },
+          {
+            "code": "kcal"
+          },
+          {
+            "code": "Bq"
+          },
+          {
+            "code": "kBq"
+          },
+          {
+            "code": "MBq"
+          },
+          {
+            "code": "GBq"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-CLUSTER.device.v1.at0003",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-CLUSTER.device.v1.at0003",
+  "name": "TypeLumenInputList",
+  "title": "Type (Lumen)",
+  "status": "draft",
+  "experimental": false,
+  "description": "SNOMED-CT codes allowed for Type (/content[openEHR-EHR-INSTRUCTION.medication_order.v3]/activities[at0001]/description[at0002]/items[openEHR-EHR-CLUSTER.device.v1,'Installation']/items[openEHR-EHR-CLUSTER.device.v1,'Lumen']/items[at0003]/value) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://snomed.info/sct",
+        "concept": [
+          {
+            "code": "257369004",
+            "display": "Single lumen tube"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "resourceType": "ValueSet",
+  "id": "openEHR-EHR-ACTION.medication.v1.careflow-step",
+  "meta": {
+    "tag": [
+      {
+        "system": "http://openehr.org/fhir/CodeSystem/generated-from",
+        "code": "webtemplate-input-list",
+        "display": "Generated from a WebTemplate input list"
+      }
+    ]
+  },
+  "url": "http://hl7.org/fhir/uv/openehr-medication-management/ValueSet/openEHR-EHR-ACTION.medication.v1.careflow-step",
+  "name": "CareflowStepStatusInputList",
+  "title": "Careflow_step (Status)",
+  "status": "draft",
+  "experimental": false,
+  "description": "Codes allowed for Careflow_step (/content[openEHR-EHR-ACTION.medication.v1,'Status']/ism_transition/careflow_step) in template cistec.openehr.medication_order.v1.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://hl7.org/fhir/uv/openehr-medication-management/CodeSystem/openEHR-EHR-ACTION.medication.v1.careflow-step",
+        "concept": [
+          {
+            "code": "at0150",
+            "display": "Medication order deleted"
+          },
+          {
+            "code": "at0002",
+            "display": "Medication order issued"
+          },
+          {
+            "code": "at0009",
+            "display": "Medication order suspended"
+          },
+          {
+            "code": "at0015",
+            "display": "Medication order stopped"
+          },
+          {
+            "code": "at0039",
+            "display": "Major change to order"
+          },
+          {
+            "code": "at0007",
+            "display": "Medication order completed"
+          }
+        ]
+      }
+    ]
+  }
+}
